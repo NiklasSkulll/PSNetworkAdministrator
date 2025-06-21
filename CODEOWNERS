@@ -1,0 +1,8 @@
+# Global code owner for PSNetworkAdministrator
+# All files require review from the repository owner
+* @NiklasSkull
+
+# You can also specify specific patterns if needed:
+# *.ps1 @NiklasSkull
+# *.psm1 @NiklasSkull
+# config.json @NiklasSkull
