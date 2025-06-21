@@ -106,10 +106,10 @@ body:
   - type: dropdown
     id: refactor_type
     attributes:
-      label: 🔧 **Refactoring Type**
-      options:
+      label: 🔧 **Refactoring Type**      options:
         - Code Duplication Removal
-        - Function Decomposition        - Performance Optimization
+        - Function Decomposition
+        - Performance Optimization
         - Error Handling Standardization
         - Parameter Validation Improvement
         - Class/Module Restructuring
@@ -164,10 +164,10 @@ body:
         - label: I can help with testing and validation
 
   - type: textarea
-    id: additional_context
-    attributes:
+    id: additional_context    attributes:
       label: 📚 **Additional Context**
-      description: Any additional information that would be helpful for this refactoring.      placeholder: |
+      description: Any additional information that would be helpful for this refactoring.
+      placeholder: |
         - Related refactoring opportunities
         - Dependencies that need to be considered
         - Timeline considerations
