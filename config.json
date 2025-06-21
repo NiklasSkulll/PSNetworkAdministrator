@@ -1,0 +1,46 @@
+{
+    "MaxRetries": 3,
+    "TimeoutSeconds": 30,
+    "DefaultDays": 30,
+    "LogRetentionDays": 90,
+    "PageSize": 1000,
+    "LargeQueryThreshold": 5000,
+    "NetworkTimeout": 10,
+    "ADQueryTimeout": 60,
+    "ExportFormats": ["CSV", "JSON", "XML"],
+    "DefaultExportFormat": "CSV",
+    "PingCount": 4,
+    "EnableProgressBars": true,
+    "ColorScheme": {
+        "Success": "Green",
+        "Warning": "Yellow", 
+        "Error": "Red",
+        "Info": "Cyan",
+        "Header": "Cyan"
+    },
+    "Features": {
+        "EnableExport": true,
+        "EnableLogging": true,
+        "EnableProgressBars": true,
+        "EnableInputValidation": true,
+        "EnableRetryMechanism": true,
+        "EnableDetailedErrorMessages": true
+    },    "Performance": {
+        "UseParallelProcessing": false,
+        "MaxConcurrentOperations": 5,
+        "CacheResults": true,
+        "CacheExpirationMinutes": 15
+    },
+    "Security": {
+        "RequireCodeSigning": false,
+        "EnableSecurityLogging": true,
+        "RestrictedMode": false,
+        "MaxConcurrentSessions": 10,
+        "SessionTimeoutMinutes": 60,
+        "RequireMFA": false,
+        "AllowCredentialCaching": false,
+        "EnableAuditTrail": true,
+        "LogSensitiveOperations": true,
+        "ValidateSSLCertificates": true
+    }
+}
