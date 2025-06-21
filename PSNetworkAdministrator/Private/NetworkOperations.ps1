@@ -329,7 +329,9 @@ function Invoke-NetworkOperationWithFallback {
     Array of fallback operations to try
 
     .PARAMETER OperationName
-    Name of the operation for logging    .PARAMETER TimeoutSeconds
+    Name of the operation for logging
+
+    .PARAMETER TimeoutSeconds
     Timeout for each operation attempt
 
     .EXAMPLE
@@ -360,16 +362,16 @@ function Invoke-NetworkOperationWithFallback {
     
     # Try fallback operations
     for ($i = 0; $i -lt $FallbackOperations.Count; $i++) {
-        Write-Verbose "Attempting fallback operation $(i + 1) for: $OperationName"
+        Write-Verbose "Attempting fallback operation $($i + 1) for: $OperationName"
         try {
-            $result = Invoke-NetworkAdminNetworkOperationWithTimeout -Operation $FallbackOperations[$i] -TimeoutSeconds $TimeoutSeconds -OperationName "$OperationName (Fallback $(i + 1))"
+            $result = Invoke-NetworkAdminNetworkOperationWithTimeout -Operation $FallbackOperations[$i] -TimeoutSeconds $TimeoutSeconds -OperationName "$OperationName (Fallback $($i + 1))"
             if ($null -ne $result) {
-                Write-ConfigHost "✓ $OperationName succeeded using fallback method $(i + 1)" -ColorType "Warning"
+                Write-ConfigHost "✓ $OperationName succeeded using fallback method $($i + 1)" -ColorType "Warning"
                 return $result
             }
         }
         catch {
-            Write-Verbose "Fallback operation $(i + 1) failed: $($_.Exception.Message)"
+            Write-Verbose "Fallback operation $($i + 1) failed: $($_.Exception.Message)"
         }
     }
     
