@@ -109,20 +109,20 @@ body:
       label: 🔧 **Refactoring Type**
       options:
         - Code Duplication Removal
-        - Function Decomposition
-        - Performance Optimization
-        - Error Handling Standardization        - Parameter Validation Improvement
+        - Function Decomposition        - Performance Optimization
+        - Error Handling Standardization
+        - Parameter Validation Improvement
         - Class/Module Restructuring
         - Design Pattern Implementation
         - Other
       description: What type of refactoring is this?
     validations:
       required: true
-
   - type: dropdown
     id: priority
     attributes:
-      label: 🚩 **Priority**      options:
+      label: 🚩 **Priority**
+      options:
         - priority: low
         - priority: medium
         - priority: high
@@ -167,8 +167,8 @@ body:
     id: additional_context
     attributes:
       label: 📚 **Additional Context**
-      description: Any additional information that would be helpful for this refactoring.
-      placeholder: |        - Related refactoring opportunities
+      description: Any additional information that would be helpful for this refactoring.      placeholder: |
+        - Related refactoring opportunities
         - Dependencies that need to be considered
         - Timeline considerations
         - References to coding standards or best practices
