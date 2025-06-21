@@ -1,4 +1,4 @@
-name: � Code Refactoring
+name: 🛠️ Code Refactoring
 description: Suggest code improvements, refactoring, or technical debt reduction without changing functionality.
 title: "[REFACTOR] "
 labels: ['refactoring', 'priority: low', 'priority: medium', 'priority: high']
