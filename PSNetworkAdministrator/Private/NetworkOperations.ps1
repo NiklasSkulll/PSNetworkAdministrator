@@ -141,7 +141,7 @@ function Test-NetworkAdminPortConnectivity {
         Test-NetConnection -ComputerName $Target -Port $Port -WarningAction SilentlyContinue -ErrorAction Stop
     }
     
-    $result = Invoke-NetworkAdminNetworkOperationWithTimeout -Operation $portTestOperation -TimeoutSeconds $TimeoutSeconds -OperationName "Port Test to $Target`:$Port"
+    $result = Invoke-NetworkAdminNetworkOperationWithTimeout -Operation $portTestOperation -TimeoutSeconds $TimeoutSeconds -OperationName "Port Test to $Target:$Port"
     
     return $result
 }
