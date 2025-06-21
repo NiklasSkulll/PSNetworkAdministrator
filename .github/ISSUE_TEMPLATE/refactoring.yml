@@ -47,12 +47,12 @@ body:
         - Inconsistent patterns: Different error handling approaches
     validations:
       required: true
-
   - type: textarea
     id: proposed_solution
     attributes:
       label: ✨ **Proposed Refactoring**
-      description: How should the code be improved? Describe your suggested approach.      placeholder: |
+      description: How should the code be improved? Describe your suggested approach.
+      placeholder: |
         Proposed changes:
         1. Extract common authentication logic into Private/AuthenticationHelpers.ps1
         2. Create a base class for common operations
@@ -111,9 +111,9 @@ body:
         - Code Duplication Removal
         - Function Decomposition
         - Performance Optimization
-        - Error Handling Standardization
-        - Parameter Validation Improvement
-        - Class/Module Restructuring        - Design Pattern Implementation
+        - Error Handling Standardization        - Parameter Validation Improvement
+        - Class/Module Restructuring
+        - Design Pattern Implementation
         - Other
       description: What type of refactoring is this?
     validations:
@@ -122,10 +122,10 @@ body:
   - type: dropdown
     id: priority
     attributes:
-      label: 🚩 **Priority**
-      options:
+      label: 🚩 **Priority**      options:
         - priority: low
-        - priority: medium        - priority: high
+        - priority: medium
+        - priority: high
       default: 1
       description: How important is this refactoring?
     validations:
@@ -168,9 +168,9 @@ body:
     attributes:
       label: 📚 **Additional Context**
       description: Any additional information that would be helpful for this refactoring.
-      placeholder: |
-        - Related refactoring opportunities
-        - Dependencies that need to be considered        - Timeline considerations
+      placeholder: |        - Related refactoring opportunities
+        - Dependencies that need to be considered
+        - Timeline considerations
         - References to coding standards or best practices
 
   - type: markdown
