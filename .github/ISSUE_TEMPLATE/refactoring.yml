@@ -22,16 +22,17 @@ body:
   - type: textarea
     id: current_state
     attributes:
-      label: � **Current Code/Structure**
+      label: 📝 **Current Code/Structure**
       description: Describe the current code that needs refactoring. Include file paths and function names.
       placeholder: |
         Files affected:
         - Public/UserManagement.ps1 (lines 45-60)
         - Public/ComputerManagement.ps1 (lines 32-47)
-        
-        Current issues:
+          Current issues:
         - Duplicate credential validation logic
         - Similar error handling patterns repeated
+    validations:
+      required: true
   - type: textarea
     id: problems
     attributes:
@@ -51,8 +52,7 @@ body:
     attributes:
       label: ✨ **Proposed Refactoring**
       description: How should the code be improved? Describe your suggested approach.
-      placeholder: |
-        Proposed changes:
+      placeholder: |        Proposed changes:
         1. Extract common authentication logic into Private/AuthenticationHelpers.ps1
         2. Create a base class for common operations
         3. Standardize error handling patterns
@@ -61,13 +61,14 @@ body:
         Benefits:
         - Reduced code duplication
         - Easier to test and maintain
-        - Consistent user experience    validations:
+        - Consistent user experience
+    validations:
       required: true
 
   - type: textarea
     id: impact
     attributes:
-      label: � **Impact & Benefits**
+      label: 🎯 **Impact & Benefits**
       description: What are the benefits of this refactoring? How will it improve the codebase?
       placeholder: |
         Benefits:
@@ -104,7 +105,7 @@ body:
   - type: dropdown
     id: refactor_type
     attributes:
-      label: � **Refactoring Type**
+      label: 🔧 **Refactoring Type**
       options:
         - Code Duplication Removal
         - Function Decomposition
@@ -113,8 +114,10 @@ body:
         - Parameter Validation Improvement
         - Class/Module Restructuring
         - Design Pattern Implementation
-        - Other
-      description: What type of refactoring is this?
+        - Other      description: What type of refactoring is this?
+    validations:
+      required: true
+
   - type: dropdown
     id: priority
     attributes:
@@ -123,8 +126,9 @@ body:
         - priority: low
         - priority: medium
         - priority: high
-      default: 1
-      description: How important is this refactoring?
+      default: 1      description: How important is this refactoring?
+    validations:
+      required: true
 
   - type: checkboxes
     id: breaking_changes
@@ -165,12 +169,12 @@ body:
       description: Any additional information that would be helpful for this refactoring.
       placeholder: |
         - Related refactoring opportunities
-        - Dependencies that need to be considered
-        - Timeline considerations
+        - Dependencies that need to be considered        - Timeline considerations
         - References to coding standards or best practices
 
   - type: markdown
     attributes:
-      value: |        ---  
+      value: |
+        ---  
         Once you've filled out all sections, click **Submit new issue**.  
-        Thank you for helping us improve code quality! �
+        Thank you for helping us improve code quality! 🚀
