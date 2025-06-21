@@ -24,7 +24,8 @@ body:
     attributes:
       label: 📝 **Current Code/Structure**
       description: Describe the current code that needs refactoring. Include file paths and function names.
-      placeholder: |        Files affected:
+      placeholder: |
+        Files affected:
         - Public/UserManagement.ps1 (lines 45-60)
         - Public/ComputerManagement.ps1 (lines 32-47)
         
@@ -167,9 +168,9 @@ body:
     attributes:
       label: 📚 **Additional Context**
       description: Any additional information that would be helpful for this refactoring.
-      placeholder: |        - Related refactoring opportunities
-        - Dependencies that need to be considered
-        - Timeline considerations
+      placeholder: |
+        - Related refactoring opportunities
+        - Dependencies that need to be considered        - Timeline considerations
         - References to coding standards or best practices
 
   - type: markdown
