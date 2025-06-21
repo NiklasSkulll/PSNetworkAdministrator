@@ -329,7 +329,9 @@ function Invoke-NetworkOperationWithFallback {
     Array of fallback operations to try
 
     .PARAMETER OperationName
-    Name of the operation for logging    .PARAMETER TimeoutSeconds
+    Name of the operation for logging
+
+    .PARAMETER TimeoutSeconds
     Timeout for each operation attempt
 
     .EXAMPLE
