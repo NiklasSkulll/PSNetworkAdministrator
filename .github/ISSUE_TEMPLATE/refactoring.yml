@@ -102,11 +102,11 @@ body:
             # ... main logic ...
         }
         ```
-
   - type: dropdown
     id: refactor_type
     attributes:
-      label: 🔧 **Refactoring Type**      options:
+      label: 🔧 **Refactoring Type**
+      options:
         - Code Duplication Removal
         - Function Decomposition
         - Performance Optimization
@@ -162,9 +162,9 @@ body:
         - label: I'm willing to submit a pull request for this refactoring
         - label: I can help with code review
         - label: I can help with testing and validation
-
   - type: textarea
-    id: additional_context    attributes:
+    id: additional_context
+    attributes:
       label: 📚 **Additional Context**
       description: Any additional information that would be helpful for this refactoring.
       placeholder: |
