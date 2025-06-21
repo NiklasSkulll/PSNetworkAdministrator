@@ -1,7 +1,7 @@
 name: 📚 Documentation Improvement
 description: Report issues with documentation or suggest documentation improvements.
 title: "[DOCS] "
-labels: ['documentation', 'triage needed']
+labels: ['documentation', 'priority: low', 'priority: medium', 'priority: high']
 assignees: []
 
 body:
@@ -132,16 +132,15 @@ body:
         - label: Add cross-references to related functions
         - label: Include security considerations
         - label: Add prerequisite information
-
   - type: dropdown
     id: priority
     attributes:
       label: 🚩 **Priority**
       options:
-        - Low
-        - Medium
-        - High
-      default: 1
+        - priority: low
+        - priority: medium
+        - priority: high
+      default: 0
       description: How important is this documentation improvement?
 
   - type: checkboxes

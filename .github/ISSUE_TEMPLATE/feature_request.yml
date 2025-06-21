@@ -1,7 +1,7 @@
 name: ✨ Feature Request
 description: Suggest a new feature or enhancement for the NetworkAdmin module.
 title: "[FEATURE] "
-labels: ['enhancement', 'triage needed']
+labels: ['enhancement', 'priority: low', 'priority: medium', 'priority: high']
 assignees: []
 
 body:
@@ -87,15 +87,14 @@ body:
         
         Output Should Include:
         - Timestamp, bytes sent/received, utilization percentage
-
   - type: dropdown
     id: priority
     attributes:
       label: 🚩 **Priority**
       options:
-        - Low
-        - Medium
-        - High
+        - priority: low
+        - priority: medium
+        - priority: high
       default: 1
       description: How important is this feature to you?
 

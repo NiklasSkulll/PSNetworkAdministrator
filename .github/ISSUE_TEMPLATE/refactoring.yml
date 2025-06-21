@@ -1,7 +1,7 @@
 name: � Code Refactoring
 description: Suggest code improvements, refactoring, or technical debt reduction without changing functionality.
 title: "[REFACTOR] "
-labels: ['refactoring', 'technical debt', 'triage needed']
+labels: ['refactoring', 'priority: low', 'priority: medium', 'priority: high']
 assignees: []
 
 body:
@@ -115,15 +115,14 @@ body:
         - Design Pattern Implementation
         - Other
       description: What type of refactoring is this?
-
   - type: dropdown
     id: priority
     attributes:
       label: 🚩 **Priority**
       options:
-        - Low
-        - Medium
-        - High
+        - priority: low
+        - priority: medium
+        - priority: high
       default: 1
       description: How important is this refactoring?
 
