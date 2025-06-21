@@ -1,9 +1,9 @@
 #
-# Module manifest for NetworkAdmin module
+# Module manifest for PSNetworkAdministrator module
 #
 @{
     # Script module or binary module file associated with this manifest
-    RootModule = 'NetworkAdmin.psm1'
+    RootModule = 'PSNetworkAdministrator.psm1'
     
     # Version number of this module
     ModuleVersion = '1.0.0'
@@ -19,13 +19,12 @@
     
     # Copyright statement for this module
     Copyright = '(c) 2025 Company. All rights reserved.'
-    
-    # Description of the functionality provided by this module
-    Description = 'Comprehensive network administration module for company networks'
+      # Description of the functionality provided by this module
+    Description = 'Comprehensive PowerShell network administration module for enterprise environments'
       # Minimum version of PowerShell required
     PowerShellVersion = '5.1'
     
-    # Functions to export from this module (aligned with NetworkAdmin.psm1)
+    # Functions to export from this module (aligned with PSNetworkAdministrator.psm1)
     FunctionsToExport = @(
         'Start-NetworkAdminTool',
         'Get-NetworkAdminConfig', 

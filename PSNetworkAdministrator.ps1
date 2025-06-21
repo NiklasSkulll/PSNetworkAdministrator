@@ -29,11 +29,11 @@ $script:LogPath = $LogPath
 $script:NoLog = $NoLog
 
 try {
-    # Import the NetworkAdmin module
-    $modulePath = Join-Path $PSScriptRoot "NetworkAdmin.psd1"
+    # Import the PSNetworkAdministrator module
+    $modulePath = Join-Path $PSScriptRoot "PSNetworkAdministrator\PSNetworkAdministrator.psd1"
     if (-not (Test-Path $modulePath)) {
-        Write-Error "NetworkAdmin module not found at: $modulePath"
-        Write-Host "Please ensure the module files are present in the script directory." -ForegroundColor Red
+        Write-Error "PSNetworkAdministrator module not found at: $modulePath"
+        Write-Host "Please ensure the module files are present in the PSNetworkAdministrator directory." -ForegroundColor Red
         exit 1
     }
     
@@ -70,9 +70,8 @@ try {
         Write-Host "ⓘ Running with user-level privileges" -ForegroundColor Cyan
         Write-AuditLog -Action "Security Check" -Details "Script started with user-level privileges"
     }
-    
-    # Validate module file integrity (basic check)
-    $criticalFiles = @("NetworkAdmin.psd1", "NetworkAdmin.psm1", "Classes\NetworkAdminClasses.ps1")
+      # Validate module file integrity (basic check)
+    $criticalFiles = @("PSNetworkAdministrator\PSNetworkAdministrator.psd1", "PSNetworkAdministrator\PSNetworkAdministrator.psm1", "PSNetworkAdministrator\Classes\NetworkAdminClasses.ps1")
     foreach ($file in $criticalFiles) {
         $filePath = Join-Path $PSScriptRoot $file
         if (Test-Path $filePath) {

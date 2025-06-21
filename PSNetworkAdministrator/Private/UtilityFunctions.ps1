@@ -170,13 +170,12 @@ function Export-Results {
             $userFormat = Read-Host "Select format (or press Enter for $Format)"
             if (-not [string]::IsNullOrWhiteSpace($userFormat) -and $script:Config.ExportFormats -contains $userFormat.ToUpper()) {
                 $Format = $userFormat.ToUpper()
-            }
-        }
+            }        }
         
         # Sanitize title for filename
         $safeTitle = $Title -replace '[^\w\-_\.]', '_'
         $fileName = "{0}_{1}_{2:yyyyMMdd_HHmmss}.{3}" -f $safeTitle, $script:Domain, (Get-Date), $Format.ToLower()
-        $exportPath = Join-Path $PSScriptRoot $fileName
+        $exportPath = Join-Path $PSScriptRoot "..\.." $fileName
         
         $exportOperation = {
             switch ($Format) {
@@ -288,7 +287,8 @@ function Show-Help {
     Write-Host "OVERVIEW:" -ForegroundColor Yellow
     Write-Host "This network administration tool provides comprehensive management"
     Write-Host "capabilities for Active Directory environments."
-    Write-Host ""    Write-Host "PARAMETERS:" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "PARAMETERS:" -ForegroundColor Yellow
     Write-Host "  -Domain       : Specify domain name (e.g., company.local)"
     Write-Host "  -Credential   : Use alternate credentials"
     Write-Host "  -LogPath      : Custom log file path"

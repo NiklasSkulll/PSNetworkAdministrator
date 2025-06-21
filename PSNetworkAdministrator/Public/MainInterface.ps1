@@ -36,9 +36,8 @@ function Start-NetworkAdminTool {
         
         [Parameter(Mandatory = $false)]
         [PSCredential]$Credential,
-        
-        [Parameter(Mandatory = $false)]
-        [string]$LogPath = "$PSScriptRoot\..\NetworkAdminLog.txt",
+          [Parameter(Mandatory = $false)]
+        [string]$LogPath = "$PSScriptRoot\..\..\NetworkAdminLog.txt",
         
         [Parameter(Mandatory = $false)]
         [switch]$NoLog
@@ -47,9 +46,8 @@ function Start-NetworkAdminTool {
     begin {
         # Initialize configuration
         Initialize-NetworkAdminConfig
-        
-        # Load external config if exists
-        $configPath = Join-Path $PSScriptRoot "..\config.json"
+          # Load external config if exists
+        $configPath = Join-Path $PSScriptRoot "..\..\config.json"
         if (Test-Path $configPath) {
             Import-NetworkAdminConfig -ConfigPath $configPath
         }

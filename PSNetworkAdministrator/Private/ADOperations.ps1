@@ -178,9 +178,9 @@ function Invoke-ADOperationWithFailover {
     .PARAMETER MaxRetries
     Maximum number of retries per domain controller
 
-    .EXAMPLE
-    Invoke-ADOperationWithFailover -Operation { Get-ADUser -Identity "testuser" } -OperationName "Get User"
-    #>    param(
+    .EXAMPLE    Invoke-ADOperationWithFailover -Operation { Get-ADUser -Identity "testuser" } -OperationName "Get User"
+    #>
+    param(
         [Parameter(Mandatory=$true)]
         [scriptblock]$Operation,
         [Parameter(Mandatory=$false)]
