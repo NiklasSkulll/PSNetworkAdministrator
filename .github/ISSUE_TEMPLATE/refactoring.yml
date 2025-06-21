@@ -24,11 +24,11 @@ body:
     attributes:
       label: 📝 **Current Code/Structure**
       description: Describe the current code that needs refactoring. Include file paths and function names.
-      placeholder: |
-        Files affected:
+      placeholder: |        Files affected:
         - Public/UserManagement.ps1 (lines 45-60)
         - Public/ComputerManagement.ps1 (lines 32-47)
-          Current issues:
+        
+        Current issues:
         - Duplicate credential validation logic
         - Similar error handling patterns repeated
     validations:
@@ -51,8 +51,8 @@ body:
     id: proposed_solution
     attributes:
       label: ✨ **Proposed Refactoring**
-      description: How should the code be improved? Describe your suggested approach.
-      placeholder: |        Proposed changes:
+      description: How should the code be improved? Describe your suggested approach.      placeholder: |
+        Proposed changes:
         1. Extract common authentication logic into Private/AuthenticationHelpers.ps1
         2. Create a base class for common operations
         3. Standardize error handling patterns
@@ -112,9 +112,9 @@ body:
         - Performance Optimization
         - Error Handling Standardization
         - Parameter Validation Improvement
-        - Class/Module Restructuring
-        - Design Pattern Implementation
-        - Other      description: What type of refactoring is this?
+        - Class/Module Restructuring        - Design Pattern Implementation
+        - Other
+      description: What type of refactoring is this?
     validations:
       required: true
 
@@ -124,9 +124,9 @@ body:
       label: 🚩 **Priority**
       options:
         - priority: low
-        - priority: medium
-        - priority: high
-      default: 1      description: How important is this refactoring?
+        - priority: medium        - priority: high
+      default: 1
+      description: How important is this refactoring?
     validations:
       required: true
 
@@ -167,9 +167,9 @@ body:
     attributes:
       label: 📚 **Additional Context**
       description: Any additional information that would be helpful for this refactoring.
-      placeholder: |
-        - Related refactoring opportunities
-        - Dependencies that need to be considered        - Timeline considerations
+      placeholder: |        - Related refactoring opportunities
+        - Dependencies that need to be considered
+        - Timeline considerations
         - References to coding standards or best practices
 
   - type: markdown
