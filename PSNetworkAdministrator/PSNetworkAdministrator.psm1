@@ -43,8 +43,18 @@ New-Alias -Name "netadmin" -Value "Start-NetworkAdminTool" -Description "Quick a
 # Export only public functions
 Export-ModuleMember -Function @(
     'Start-NetworkAdminTool',
-    'Get-NetworkAdminConfig', 
-    'Set-NetworkAdminConfig',
-    'Test-NetworkAdminConnectivity',
-    'Export-NetworkAdminResults'
+    'Show-NetworkAdminBanner',
+    'Show-NetworkAdminMainMenu', 
+    'Show-NetworkAdminHelp',
+    'Get-DomainName',
+    'Test-DomainConnectivity',
+    'Invoke-NetworkAdminUserManagement',
+    'Invoke-NetworkAdminComputerManagement',
+    'Invoke-NetworkAdminGroupManagement',
+    'Invoke-NetworkAdminNetworkDiagnostics',
+    'Invoke-NetworkAdminDNSManagement',
+    'Invoke-NetworkAdminDHCPInfo',
+    'Invoke-NetworkAdminDomainControllerInfo',
+    'Invoke-NetworkAdminSecurityAudit',
+    'Invoke-SystemHealthCheck'
 ) -Alias 'netadmin'
