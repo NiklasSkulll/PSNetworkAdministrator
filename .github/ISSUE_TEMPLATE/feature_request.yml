@@ -1,0 +1,140 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for the NetworkAdmin module.
+title: "[FEATURE] "
+labels: ['enhancement', 'triage needed']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Before submitting, please make sure you've:
+        - Searched for existing feature requests to avoid duplicates.
+        - Considered if this fits with the module's goals and scope.
+
+  - type: input
+    id: summary
+    attributes:
+      label: 🚀 **Feature Summary (One sentence)**
+      description: A brief description of the feature you'd like to see.
+      placeholder: "e.g. Add support for monitoring network bandwidth usage across multiple computers"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🎯 **Problem Statement**
+      description: What problem does this feature solve? What's the current pain point?
+      placeholder: |
+        Currently, there's no way to...
+        This makes it difficult to...
+        Users have to manually...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 **Proposed Solution**
+      description: Describe your ideal solution. How should this feature work?
+      placeholder: |
+        I'd like to see a new function like:
+        - Get-NetworkBandwidth -ComputerName @("PC1", "PC2") -Duration "1h"
+        - Should return real-time or historical bandwidth data
+        - Could integrate with existing network diagnostics
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 **Alternatives Considered**
+      description: What other approaches have you considered? Are there existing workarounds?
+      placeholder: |
+        - Considered using third-party tools like...
+        - Current workaround involves...
+        - Alternative approach could be...
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: 📋 **Use Cases & Examples**
+      description: Provide specific examples of how this feature would be used.
+      placeholder: |
+        Use Case 1: Network administrators monitoring server farm bandwidth
+        Use Case 2: Troubleshooting network performance issues
+        Use Case 3: Capacity planning and reporting
+        
+        Example usage:
+        ```powershell
+        Get-NetworkBandwidth -ComputerName "Server01" -Interface "Ethernet" -Duration "24h"
+        ```
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: 📝 **Requirements & Specifications**
+      description: Any specific requirements, parameters, or technical details?
+      placeholder: |
+        Required Parameters:
+        - ComputerName (string/array)
+        - Duration (timespan)
+        
+        Optional Parameters:
+        - Interface (string)
+        - OutputFormat (table/csv/json)
+        
+        Output Should Include:
+        - Timestamp, bytes sent/received, utilization percentage
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🚩 **Priority**
+      options:
+        - Low
+        - Medium
+        - High
+      default: 1
+      description: How important is this feature to you?
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 🔧 **Estimated Complexity**
+      options:
+        - Simple (few hours)
+        - Medium (few days)
+        - Complex (weeks)
+        - Major (significant effort)
+      default: 1
+      description: How complex do you think this feature would be to implement?
+
+  - type: checkboxes
+    id: implementation
+    attributes:
+      label: 🛠️ **Implementation Willingness**
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I'm willing to submit a pull request for this feature
+        - label: I can help with testing and validation
+        - label: I can provide domain expertise and requirements clarification
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: 📚 **Additional Context**
+      description: Links, references, or any other context that would be helpful.
+      placeholder: |
+        - Related PowerShell modules: ...
+        - Documentation references: ...
+        - Similar features in other tools: ...
+        - Screenshots or mockups: ...
+
+  - type: markdown
+    attributes:
+      value: |
+        ---  
+        Once you've filled out all sections, click **Submit new issue**.  
+        Thank you for helping us improve the NetworkAdmin module! ✨
