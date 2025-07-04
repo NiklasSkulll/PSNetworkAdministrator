@@ -55,17 +55,80 @@ function Invoke-PSNetworkAdmin {
         [string]$LogPath
     )
 
-    # This is just a placeholder - the actual implementation will be added later
-    # For testing purposes only
+    # Clear the terminal for a clean interface
+    Clear-Host
     
-    Write-Host "PSNetworkAdministrator - Network Administration Tool" -ForegroundColor Cyan
-    Write-Host "This is a placeholder for the actual implementation." -ForegroundColor Yellow
+    # Display ASCII header
+    Write-Host @'
+     ____  ____  _   _      _                      _    
+    |  _ \/ ___|| \ | | ___| |___      _____  _ __| | __
+    | |_) \___ \|  \| |/ _ \ __\ \ /\ / / _ \| '__| |/ /
+    |  __/ ___) | |\  |  __/ |_ \ V  V / (_) | |  |   < 
+    |_|   |____/|_| \_|\___|\__| \_/\_/ \___/|_|  |_|\_\
+        _       _           _       _     _             _             
+       / \   __| |_ __ ___ (_)_ __ (_)___| |_ _ __ __ _| |_  ___  _ __ 
+      / _ \ / _` | '_ ` _ \| | '_ \| / __| __| '__/ _` | __|/ _ \| '__|
+     / ___ \ (_| | | | | | | | | | | \__ \ |_| | | (_| | |_| (_) | |   
+    /_/   \_\__,_|_| |_| |_|_|_| |_|_|___/\__|_|  \__,_|\__|\___/|_|
+'@ -ForegroundColor Cyan
+
+    # Display welcome message and version information
+    $moduleVersion = (Get-Module PSNetworkAdministrator).Version.ToString()
+    if (-not $moduleVersion) { $moduleVersion = "0.1.0" } # Fallback if version not found
     
-    # Return a test object for validation
+    Write-Host "`n`n  Welcome to PSNetwork Administrator v$moduleVersion!" -ForegroundColor Yellow
+    Write-Host "  Your one-stop tool for Windows network administration tasks`n" -ForegroundColor Gray
+    
+    # Log the start of the application
+    try {
+        Write-Log -Message "PSNetworkAdministrator started" -Level Info -LogPath $LogPath
+    }
+    catch {
+        # Continue even if logging fails
+        Write-Host "  Warning: Unable to write to log file. Continuing without logging." -ForegroundColor DarkYellow
+    }
+    
+    # Display current connection information
+    if (-not $Domain) {
+        $Domain = $env:USERDNSDOMAIN
+        if (-not $Domain) {
+            $Domain = "Not connected to a domain"
+        }
+    }
+    
+    Write-Host "  Current domain: $Domain" -ForegroundColor White
+    Write-Host "  Current user: $($env:USERNAME)" -ForegroundColor White
+    Write-Host "`n  Please select an option from the menu below:`n" -ForegroundColor Green
+    
+    # Main menu options
+    $menuOptions = @(
+        "1. User Management"
+        "2. Computer Management"
+        "3. Group Management"
+        "4. Network Diagnostics"
+        "5. DNS Management"
+        "6. DHCP Information"
+        "7. Domain Controller Information"
+        "8. Security Auditing"
+        "9. System Health Check"
+        "10. Switch Domain"
+        "Q. Quit"
+    )
+    
+    # Display menu options
+    foreach ($option in $menuOptions) {
+        Write-Host "  $option" -ForegroundColor White
+    }
+    
+    # This is just a placeholder - the actual menu selection logic will be added later
+    Write-Host "`n  Select an option (1-10 or Q to quit): " -ForegroundColor Yellow -NoNewline
+    
+    # Return a status object for tracking
     [PSCustomObject]@{
         ModuleName = "PSNetworkAdministrator"
-        Version = "0.1.0"
+        Version = $moduleVersion
         Status = "Initialized"
+        Domain = $Domain
         Timestamp = Get-Date
     }
 }
