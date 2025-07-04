@@ -120,8 +120,18 @@ function Invoke-PSNetworkAdmin {
         Write-Host "  $option" -ForegroundColor White
     }
     
-    # This is just a placeholder - the actual menu selection logic will be added later
-    Write-Host "`n  Select an option (1-10 or Q to quit)" -ForegroundColor Yellow -NoNewline
+    # Prompt for user selection
+    Write-Host "`n  Select an option (1-10 or Q to quit): " -ForegroundColor Yellow -NoNewline
+    $userChoice = Read-Host
+    
+    # Basic input processing (placeholder for more extensive menu handling)
+    if ($userChoice -eq "Q" -or $userChoice -eq "q") {
+        Write-Host "`n  Exiting PSNetworkAdministrator. Goodbye!`n" -ForegroundColor Cyan
+    }
+    else {
+        Write-Host "`n  You selected option: $userChoice" -ForegroundColor Red
+        Write-Host "  This functionality will be implemented in a future update.`n" -ForegroundColor Gray
+    }
     
     # Return a status object for tracking but modify how it's displayed
     # First, create the object
