@@ -127,6 +127,7 @@ function Invoke-PSNetworkAdmin {
     # Basic input processing (placeholder for more extensive menu handling)
     if ($userChoice -eq "Q" -or $userChoice -eq "q") {
         Write-Host "`n  Exiting PSNetworkAdministrator. Goodbye!`n" -ForegroundColor Cyan
+        return "Quit"  # Exit immediately with the quit value
     }
     else {
         Write-Host "`n  You selected option: $userChoice" -ForegroundColor Red
@@ -141,25 +142,36 @@ function Invoke-PSNetworkAdmin {
         Status = "Initialized"
         Domain = $Domain
         Timestamp = Get-Date
+        UserChoice = $userChoice  # Add the user's choice to the status object
     }
     
-    # If running in interactive mode (not being captured in a variable), 
-    # manually format the output instead of returning the object
-    if ($MyInvocation.CommandOrigin -eq 'Runspace') {
-        Write-Host "`n "
-        Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
-        Write-Host "  ModuleName  : $($statusObject.ModuleName)" -ForegroundColor gray
-        Write-Host "  Version     : $($statusObject.Version)" -ForegroundColor gray
-        Write-Host "  Status      : $($statusObject.Status)" -ForegroundColor gray
-        Write-Host "  Domain      : $($statusObject.Domain)" -ForegroundColor gray
-        Write-Host "  Timestamp   : $($statusObject.Timestamp)" -ForegroundColor gray
-        Write-Host # Add another blank line
-        return $null # Return nothing to prevent default format from appearing
+    # Always display the status information
+    Write-Host "`n "
+    Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
+    Write-Host "  ModuleName  : $($statusObject.ModuleName)" -ForegroundColor gray
+    Write-Host "  Version     : $($statusObject.Version)" -ForegroundColor gray
+    Write-Host "  Status      : $($statusObject.Status)" -ForegroundColor gray
+    Write-Host "  Domain      : $($statusObject.Domain)" -ForegroundColor gray
+    Write-Host "  Timestamp   : $($statusObject.Timestamp)" -ForegroundColor gray
+    Write-Host # Add another blank line
+    
+    # For interactive console use, prompt to press Q to quit
+    Write-Host "`n  Press Q to quit or any other key to continue..." -ForegroundColor Cyan
+    $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+    
+    # Check if user pressed Q to quit
+    if ($key.Character -eq 'Q' -or $key.Character -eq 'q') {
+        Write-Host "`n  Exiting PSNetworkAdministrator. Goodbye!`n" -ForegroundColor Cyan
+        return "Quit"
     }
-    else {
-        # When called programmatically, return the object for further processing
+    
+    # When called programmatically, return the object for further processing
+    if ($MyInvocation.CommandOrigin -ne 'Runspace') {
         return $statusObject
     }
+    
+    # When run interactively in console, return null
+    return $null
 }
 
 # Export function

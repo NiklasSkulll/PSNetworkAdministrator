@@ -15,11 +15,11 @@
 $modulePath = Join-Path -Path $PSScriptRoot -ChildPath "PSNetworkAdministrator"
 Import-Module -Name $modulePath -Force
 
-# Start the application
-Invoke-PSNetworkAdmin
+# Start the application and capture the return value
+$result = Invoke-PSNetworkAdmin
 
-# Keep the console open if launched directly
-if ($Host.Name -eq 'ConsoleHost') {
-    Write-Host "`nPress any key to exit..." -ForegroundColor Cyan
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+# Return the status object if it's not the special quit value
+# This preserves the original functionality for scripts that might use this script
+if ($result -ne 'Quit' -and $result -is [PSCustomObject]) {
+    return $result
 }
