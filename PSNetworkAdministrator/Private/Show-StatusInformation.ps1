@@ -14,19 +14,33 @@
 function Show-StatusInformation {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [PSCustomObject]$StatusObject
     )
-    
-    Write-Host "`n "
-    Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
-    Write-Host "  ModuleName  : $($StatusObject.ModuleName)" -ForegroundColor Gray
-    Write-Host "  Version     : $($StatusObject.Version)" -ForegroundColor Gray
-    Write-Host "  Status      : $($StatusObject.Status)" -ForegroundColor Gray
-    Write-Host "  Domain      : $($StatusObject.Domain)" -ForegroundColor Gray
-    Write-Host "  Timestamp   : $($StatusObject.Timestamp)" -ForegroundColor Gray
-    if ($StatusObject.UserChoice) {
-        Write-Host "  UserChoice : $($StatusObject.UserChoice)" -ForegroundColor Gray
+
+    begin {
+        Write-Verbose "Starting status information display"
     }
-    Write-Host # Add another blank line
+
+    process {
+        Write-Verbose "Displaying status for $($StatusObject.ModuleName) v$($StatusObject.Version)"
+        
+        Write-Host "`n "
+        Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
+        Write-Host "  ModuleName  : $($StatusObject.ModuleName)" -ForegroundColor Gray
+        Write-Host "  Version     : $($StatusObject.Version)" -ForegroundColor Gray
+        Write-Host "  Status      : $($StatusObject.Status)" -ForegroundColor Gray
+        Write-Host "  Domain      : $($StatusObject.Domain)" -ForegroundColor Gray
+        Write-Host "  Timestamp   : $($StatusObject.Timestamp)" -ForegroundColor Gray
+        
+        if (-not [string]::IsNullOrWhiteSpace($StatusObject.UserChoice)) {
+            Write-Host "  UserChoice  : $($StatusObject.UserChoice)" -ForegroundColor Gray
+        }
+        
+        Write-Host # Add another blank line
+    }
+
+    end {
+        Write-Verbose "Status information display complete"
+    }
 }
