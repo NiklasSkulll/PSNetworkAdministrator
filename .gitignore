@@ -1,0 +1,69 @@
+# Build artifacts
+Build/artifacts/
+Build/output/
+Build/temp/
+
+# Runtime logs
+Logs/
+*.log
+
+# PowerShell specific
+*.ps1xml
+*.psd1~
+*.psm1~
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# PowerShell Gallery
+publish/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Package files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# PowerShell execution policy bypass artifacts
+*.ps1.bak
