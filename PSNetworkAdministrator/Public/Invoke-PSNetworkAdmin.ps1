@@ -55,6 +55,43 @@ function Invoke-PSNetworkAdmin {
         [string]$LogPath
     )
 
+    # Helper function to create a status object
+    function New-StatusObject {
+        param(
+            [string]$ModuleName = "PSNetworkAdministrator",
+            [string]$Version = $moduleVersion,
+            [string]$Status = "Initialized",
+            [string]$Domain = $Domain,
+            [string]$UserChoice = $userChoice
+        )
+        
+        return [PSCustomObject]@{
+            ModuleName = $ModuleName
+            Version = $Version
+            Status = $Status
+            Domain = $Domain
+            Timestamp = Get-Date
+            UserChoice = $UserChoice
+        }
+    }
+    
+    # Helper function to display the status information
+    function Show-StatusInformation {
+        param(
+            [Parameter(Mandatory = $true)]
+            [PSCustomObject]$StatusObject
+        )
+        
+        Write-Host "`n "
+        Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
+        Write-Host "  ModuleName  : $($StatusObject.ModuleName)" -ForegroundColor Gray
+        Write-Host "  Version     : $($StatusObject.Version)" -ForegroundColor Gray
+        Write-Host "  Status      : $($StatusObject.Status)" -ForegroundColor Gray
+        Write-Host "  Domain      : $($StatusObject.Domain)" -ForegroundColor Gray
+        Write-Host "  Timestamp   : $($StatusObject.Timestamp)" -ForegroundColor Gray
+        Write-Host # Add another blank line
+    }
+    
     # Clear the terminal for a clean interface
     Clear-Host
     
@@ -134,29 +171,12 @@ function Invoke-PSNetworkAdmin {
         Write-Host "  This functionality will be implemented in a future update.`n" -ForegroundColor Gray
     }
     
-    # Return a status object for tracking but modify how it's displayed
-    # First, create the object
-    $statusObject = [PSCustomObject]@{
-        ModuleName = "PSNetworkAdministrator"
-        Version = $moduleVersion
-        Status = "Initialized"
-        Domain = $Domain
-        Timestamp = Get-Date
-        UserChoice = $userChoice  # Add the user's choice to the status object
-    }
-    
-    # Always display the status information
-    Write-Host "`n "
-    Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
-    Write-Host "  ModuleName  : $($statusObject.ModuleName)" -ForegroundColor gray
-    Write-Host "  Version     : $($statusObject.Version)" -ForegroundColor gray
-    Write-Host "  Status      : $($statusObject.Status)" -ForegroundColor gray
-    Write-Host "  Domain      : $($statusObject.Domain)" -ForegroundColor gray
-    Write-Host "  Timestamp   : $($statusObject.Timestamp)" -ForegroundColor gray
-    Write-Host # Add another blank line
+    # Create and display the status object
+    $statusObject = New-StatusObject
+    Show-StatusInformation -StatusObject $statusObject
     
     # For interactive console use, prompt to press Q to quit
-    Write-Host "`n  Press Q to quit or any other key to continue..." -ForegroundColor Cyan
+    Write-Host "`n  Press Q to quit..." -ForegroundColor Cyan
     $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     
     # Check if user pressed Q to quit
