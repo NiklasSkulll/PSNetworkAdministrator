@@ -1,6 +1,6 @@
 # PSNetworkAdministrator Test Environment
 
-This folder contains the test environment setup for the PSNetworkAdministrator module.
+This document describes the test environment setup for the PSNetworkAdministrator module.
 
 ## Test Environment Components
 
@@ -9,6 +9,7 @@ This folder contains the test environment setup for the PSNetworkAdministrator m
 - `MockGenerator.ps1` - Functions to generate mock objects for testing
 - `TestEnvironment.ps1` - Script to initialize a test environment with sample data
 - `Start-Tests.ps1` - Script to start the test environment without running tests
+- `Verify-TestEnvironment.ps1` - Script to verify that the test environment is properly set up
 
 ## Setup Instructions
 
@@ -73,3 +74,17 @@ The `TestSetup.ps1` script provides several useful functions and variables:
 - `$script:TestDomain` - Test domain name (contoso.test)
 - `$script:TestDC` - Test domain controller name (DC01)
 - `$script:TestLogDirectory` - Directory for test logs
+
+## Verifying the Test Environment
+
+To verify that the test environment is properly set up:
+
+```powershell
+# Verify without initializing
+.\Verify-TestEnvironment.ps1
+
+# Or verify and initialize in one step
+.\Verify-TestEnvironment.ps1 -Initialize
+```
+
+This will check that all required components are in place and functional, creating any missing elements if the `-Initialize` parameter is used.

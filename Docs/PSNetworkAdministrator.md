@@ -14,6 +14,7 @@ A single-entry PowerShell script providing a text‑based menu to administer you
 6. [Menu Functions](#menu-functions)
 7. [Modules](#modules)
 8. [Logging & Error Handling](#logging--error-handling)
+9. [Test Environment](TestEnvironment.md)
 
 ---
 
