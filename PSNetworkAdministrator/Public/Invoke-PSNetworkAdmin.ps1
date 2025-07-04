@@ -76,7 +76,7 @@ function Invoke-PSNetworkAdmin {
     $moduleVersion = (Get-Module PSNetworkAdministrator).Version.ToString()
     if (-not $moduleVersion) { $moduleVersion = "0.1.0" } # Fallback if version not found
     
-    Write-Host "`n`n  Welcome to PSNetwork Administrator v$moduleVersion!" -ForegroundColor Yellow
+    Write-Host "`n  Welcome to PSNetwork Administrator v$moduleVersion!" -ForegroundColor Cyan
     Write-Host "  Your one-stop tool for Windows network administration tasks`n" -ForegroundColor Gray
     
     # Log the start of the application
@@ -102,17 +102,17 @@ function Invoke-PSNetworkAdmin {
     
     # Main menu options
     $menuOptions = @(
-        "1. User Management"
-        "2. Computer Management"
-        "3. Group Management"
-        "4. Network Diagnostics"
-        "5. DNS Management"
-        "6. DHCP Information"
-        "7. Domain Controller Information"
-        "8. Security Auditing"
-        "9. System Health Check"
+        "1.  User Management"
+        "2.  Computer Management"
+        "3.  Group Management"
+        "4.  Network Diagnostics"
+        "5.  DNS Management"
+        "6.  DHCP Information"
+        "7.  Domain Controller Information"
+        "8.  Security Auditing"
+        "9.  System Health Check"
         "10. Switch Domain"
-        "Q. Quit"
+        " Q. Quit"
     )
     
     # Display menu options
@@ -121,15 +121,34 @@ function Invoke-PSNetworkAdmin {
     }
     
     # This is just a placeholder - the actual menu selection logic will be added later
-    Write-Host "`n  Select an option (1-10 or Q to quit): " -ForegroundColor Yellow -NoNewline
+    Write-Host "`n  Select an option (1-10 or Q to quit)" -ForegroundColor Yellow -NoNewline
     
-    # Return a status object for tracking
-    [PSCustomObject]@{
+    # Return a status object for tracking but modify how it's displayed
+    # First, create the object
+    $statusObject = [PSCustomObject]@{
         ModuleName = "PSNetworkAdministrator"
         Version = $moduleVersion
         Status = "Initialized"
         Domain = $Domain
         Timestamp = Get-Date
+    }
+    
+    # If running in interactive mode (not being captured in a variable), 
+    # manually format the output instead of returning the object
+    if ($MyInvocation.CommandOrigin -eq 'Runspace') {
+        Write-Host "`n "
+        Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
+        Write-Host "  ModuleName  : $($statusObject.ModuleName)" -ForegroundColor gray
+        Write-Host "  Version     : $($statusObject.Version)" -ForegroundColor gray
+        Write-Host "  Status      : $($statusObject.Status)" -ForegroundColor gray
+        Write-Host "  Domain      : $($statusObject.Domain)" -ForegroundColor gray
+        Write-Host "  Timestamp   : $($statusObject.Timestamp)" -ForegroundColor gray
+        Write-Host # Add another blank line
+        return $null # Return nothing to prevent default format from appearing
+    }
+    else {
+        # When called programmatically, return the object for further processing
+        return $statusObject
     }
 }
 
