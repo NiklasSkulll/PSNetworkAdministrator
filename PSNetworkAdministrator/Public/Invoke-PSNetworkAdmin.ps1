@@ -55,41 +55,11 @@ function Invoke-PSNetworkAdmin {
         [string]$LogPath
     )
 
-    # Helper function to create a status object
-    function New-StatusObject {
-        param(
-            [string]$ModuleName = "PSNetworkAdministrator",
-            [string]$Version = $moduleVersion,
-            [string]$Status = "Initialized",
-            [string]$Domain = $Domain,
-            [string]$UserChoice = $userChoice
-        )
-        
-        return [PSCustomObject]@{
-            ModuleName = $ModuleName
-            Version = $Version
-            Status = $Status
-            Domain = $Domain
-            Timestamp = Get-Date
-            UserChoice = $UserChoice
-        }
-    }
-    
-    # Helper function to display the status information
-    function Show-StatusInformation {
-        param(
-            [Parameter(Mandatory = $true)]
-            [PSCustomObject]$StatusObject
-        )
-        
-        Write-Host "`n "
-        Write-Host "  PSNetworkAdministrator Status:" -ForegroundColor Cyan
-        Write-Host "  ModuleName  : $($StatusObject.ModuleName)" -ForegroundColor Gray
-        Write-Host "  Version     : $($StatusObject.Version)" -ForegroundColor Gray
-        Write-Host "  Status      : $($StatusObject.Status)" -ForegroundColor Gray
-        Write-Host "  Domain      : $($StatusObject.Domain)" -ForegroundColor Gray
-        Write-Host "  Timestamp   : $($StatusObject.Timestamp)" -ForegroundColor Gray
-        Write-Host # Add another blank line
+    # Set default log path if not specified
+    if (-not $LogPath) {
+        $moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+        $LogPath = Join-Path -Path $moduleRoot -ChildPath "Logs"
+        $LogPath = Join-Path -Path $LogPath -ChildPath "PSNetworkAdmin_$((Get-Date).ToString('yyyyMMdd')).log"
     }
     
     # Clear the terminal for a clean interface
@@ -109,10 +79,11 @@ function Invoke-PSNetworkAdmin {
     /_/   \_\__,_|_| |_| |_|_|_| |_|_|___/\__|_|  \__,_|\__|\___/|_|
 '@ -ForegroundColor Cyan
 
-    # Display welcome message and version information
+    # Get module version
     $moduleVersion = (Get-Module PSNetworkAdministrator).Version.ToString()
     if (-not $moduleVersion) { $moduleVersion = "0.1.0" } # Fallback if version not found
     
+    # Display welcome message
     Write-Host "`n  Welcome to PSNetwork Administrator v$moduleVersion!" -ForegroundColor Cyan
     Write-Host "  Your one-stop tool for Windows network administration tasks`n" -ForegroundColor Gray
     
@@ -125,54 +96,58 @@ function Invoke-PSNetworkAdmin {
         Write-Host "  Warning: Unable to write to log file. Continuing without logging." -ForegroundColor DarkYellow
     }
     
-    # Display current connection information
-    if (-not $Domain) {
-        $Domain = $env:USERDNSDOMAIN
-        if (-not $Domain) {
+    # Handle domain information
+    if ([string]::IsNullOrEmpty($Domain)) {
+        try {
+            # Try to get the domain name safely
+            $Domain = $env:USERDNSDOMAIN
+        }
+        catch {
+            # Ignore any errors
+        }
+        
+        # If still empty, set default message
+        if ([string]::IsNullOrEmpty($Domain)) {
             $Domain = "Not connected to a domain"
         }
     }
     
+    # Display connection information
     Write-Host "  Current domain: $Domain" -ForegroundColor White
     Write-Host "  Current user: $($env:USERNAME)" -ForegroundColor White
     Write-Host "`n  Please select an option from the menu below:`n" -ForegroundColor Green
     
-    # Main menu options
-    $menuOptions = @(
-        "1.  User Management"
-        "2.  Computer Management"
-        "3.  Group Management"
-        "4.  Network Diagnostics"
-        "5.  DNS Management"
-        "6.  DHCP Information"
-        "7.  Domain Controller Information"
-        "8.  Security Auditing"
-        "9.  System Health Check"
-        "10. Switch Domain"
-        " Q. Quit"
-    )
+    # Get user menu selection using the helper function
+    $menuSelection = Get-MenuOption
     
-    # Display menu options
-    foreach ($option in $menuOptions) {
-        Write-Host "  $option" -ForegroundColor White
-    }
-    
-    # Prompt for user selection
-    Write-Host "`n  Select an option (1-10 or Q to quit): " -ForegroundColor Yellow -NoNewline
-    $userChoice = Read-Host
-    
-    # Basic input processing (placeholder for more extensive menu handling)
-    if ($userChoice -eq "Q" -or $userChoice -eq "q") {
+    # Process the menu selection
+    if ($menuSelection.IsQuit) {
         Write-Host "`n  Exiting PSNetworkAdministrator. Goodbye!`n" -ForegroundColor Cyan
         return "Quit"  # Exit immediately with the quit value
     }
+    elseif (-not $menuSelection.IsValid) {
+        # Handle invalid selection (already displayed message in Get-MenuOption)
+        # Fall through to show status and prompt to continue
+    }
     else {
-        Write-Host "`n  You selected option: $userChoice" -ForegroundColor Red
+        # Valid selection, show what was selected
+        Write-Host "`n  You selected: $($menuSelection.Option.Name)" -ForegroundColor Cyan
         Write-Host "  This functionality will be implemented in a future update.`n" -ForegroundColor Gray
+        
+        # In the future, you would call the appropriate command here:
+        # & $menuSelection.Option.Command -Domain $Domain -Credential $Credential
     }
     
     # Create and display the status object
-    $statusObject = New-StatusObject
+    $userChoiceValue = if ($menuSelection.IsQuit) {
+        "Q"
+    } elseif ($menuSelection.Option -and $menuSelection.Option.Number) {
+        $menuSelection.Option.Number
+    } else {
+        "Invalid"
+    }
+    
+    $statusObject = New-StatusObject -Version $moduleVersion -Domain $Domain -UserChoice $userChoiceValue
     Show-StatusInformation -StatusObject $statusObject
     
     # For interactive console use, prompt to press Q to quit
@@ -185,13 +160,12 @@ function Invoke-PSNetworkAdmin {
         return "Quit"
     }
     
-    # When called programmatically, return the object for further processing
+    # Return the status object for programmatic use or null for interactive use
     if ($MyInvocation.CommandOrigin -ne 'Runspace') {
         return $statusObject
+    } else {
+        return $null
     }
-    
-    # When run interactively in console, return null
-    return $null
 }
 
 # Export function
