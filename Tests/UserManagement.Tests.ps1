@@ -8,6 +8,21 @@ BeforeAll {
     # Import the module under test
     Import-ModuleForTest
     
+    # Define empty function stubs for AD cmdlets if they don't exist
+    # This allows us to mock them even when the ActiveDirectory module is not installed
+    if (-not (Get-Command -Name Get-ADUser -ErrorAction SilentlyContinue)) {
+        function global:Get-ADUser { param($Identity, $Filter, $Properties) }
+    }
+    if (-not (Get-Command -Name New-ADUser -ErrorAction SilentlyContinue)) {
+        function global:New-ADUser { param($Name, $SamAccountName, $UserPrincipalName) }
+    }
+    if (-not (Get-Command -Name Set-ADUser -ErrorAction SilentlyContinue)) {
+        function global:Set-ADUser { param($Identity, $Enabled) }
+    }
+    if (-not (Get-Command -Name Remove-ADUser -ErrorAction SilentlyContinue)) {
+        function global:Remove-ADUser { param($Identity, $Confirm) }
+    }
+    
     # Mock AD cmdlets that would be used in the UserManagement module
     Mock -CommandName Get-ADUser -MockWith { 
         return [PSCustomObject]@{
@@ -24,9 +39,11 @@ BeforeAll {
 
 Describe 'UserManagement Module Tests' {
     Context 'Module Loading' {
-        It 'UserManagement module functions should be available' {
-            # This test will be updated when the actual module is implemented
-            # $true | Should -Be $true
+        It 'AD function mocks should be available' {
+            # Verify our mock is working
+            $user = Get-ADUser -Identity 'testuser'
+            $user | Should -Not -BeNullOrEmpty
+            $user.SamAccountName | Should -Be 'testuser'
         }
     }
     

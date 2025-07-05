@@ -49,6 +49,9 @@ function Invoke-PSNetworkAdmin {
         [Parameter(Position = 0, ParameterSetName = "WithCredentials")]
         [string]$Domain,
         
+        [Parameter(DontShow)]
+        [switch]$TestMode,
+        
         [Parameter(Position = 1, Mandatory = $false, ParameterSetName = "WithCredentials")]
         [System.Management.Automation.PSCredential]$Credential,
         
@@ -68,9 +71,12 @@ function Invoke-PSNetworkAdmin {
         Write-Verbose "Using default log path: $LogPath"
     }
     
-    # Clear the terminal for a clean interface
-    if (-not $WhatIfPreference) {
+    # Clear the terminal for a clean interface (but skip in test mode)
+    if (-not $WhatIfPreference -and -not $TestMode -and -not $Global:PSNetworkAdminTestMode) {
         Clear-Host
+    }
+    else {
+        Write-Verbose "Skipping Clear-Host in test/WhatIf mode"
     }
     #endregion Initialization
     
@@ -148,7 +154,13 @@ function Invoke-PSNetworkAdmin {
     # Get user menu selection using the helper function
     Write-Verbose "Displaying menu options"
     if ($PSCmdlet.ShouldProcess("Menu options", "Display and get selection")) {
-        $menuSelection = Get-MenuOption
+        # Check if we're in test mode
+        if ($TestMode -or $Global:PSNetworkAdminTestMode) {
+            $menuSelection = Get-MenuOption -SkipMenuDisplay -TestInput "1"
+            Write-Verbose "Test mode: Using predefined menu selection"
+        } else {
+            $menuSelection = Get-MenuOption
+        }
         Write-Verbose "User selected: $(if($menuSelection.IsQuit){'Quit'}elseif($menuSelection.IsValid){$menuSelection.Option.Name}else{'Invalid option'})"
     } else {
         # Create a placeholder selection for WhatIf mode
@@ -202,7 +214,8 @@ function Invoke-PSNetworkAdmin {
     Show-StatusInformation -StatusObject $statusObject
     
     # For interactive console use, prompt to press Q to quit
-    if (-not $WhatIfPreference) {
+    # Skip in test mode, WhatIf mode, or when global test flag is set
+    if (-not $WhatIfPreference -and -not $TestMode -and -not $Global:PSNetworkAdminTestMode) {
         Write-Host "`n  Press Q to quit..." -ForegroundColor Cyan
         Write-Verbose "Waiting for user to press Q to exit"
         $key = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
@@ -211,6 +224,13 @@ function Invoke-PSNetworkAdmin {
         if ($key.Character -eq 'Q' -or $key.Character -eq 'q') {
             Write-Host "`n  Exiting PSNetworkAdministrator. Goodbye!`n" -ForegroundColor Cyan
             Write-Verbose "User pressed Q to exit"
+            return "Quit"
+        }
+    }
+    else {
+        Write-Verbose "Skipping interactive 'press Q to quit' prompt in test/WhatIf mode"
+        # In test mode, just return as if Q was pressed
+        if ($TestMode -or $Global:PSNetworkAdminTestMode) {
             return "Quit"
         }
     }

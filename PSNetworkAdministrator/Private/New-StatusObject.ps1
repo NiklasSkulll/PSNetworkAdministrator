@@ -49,20 +49,23 @@ function New-StatusObject {
         Write-Verbose "Using domain: $Domain"
     }
     
+    # Get the current timestamp
+    $Timestamp = Get-Date
+    
     Write-Verbose "Status: $Status, UserChoice: $UserChoice"
     
-    # Create and return the status object
+    # Create the status object without PSTypeNames
     $statusObject = [PSCustomObject]@{
         ModuleName = $ModuleName
         Version = $Version
         Status = $Status
         Domain = $Domain
-        Timestamp = Get-Date
+        Timestamp = $Timestamp
         UserChoice = $UserChoice
     }
     
-    # Add type name for potential future formatting
-    $statusObject.PSTypeNames.Insert(0, 'PSNetworkAdministrator.StatusObject')
+    # Add PSTypeNames using the preferred method
+    $statusObject.PSObject.TypeNames.Insert(0, 'PSNetworkAdministrator.StatusObject')
     
     return $statusObject
 }

@@ -65,5 +65,37 @@ function New-TestLogFile {
     return $logFilePath
 }
 
-# Export test setup functions and variables
-Export-ModuleMember -Function Import-ModuleForTest, Test-MockADConnection, New-TestLogFile -Variable ProjectRoot, ModulePath, ModuleName, TestDomain, TestDC, TestCredentials, TestLogDirectory
+# Make functions and variables available in the global scope instead of using Export-ModuleMember
+# (Export-ModuleMember can only be used within a module)
+foreach ($function in @('Import-ModuleForTest', 'Test-MockADConnection', 'New-TestLogFile')) {
+    if (Test-Path function:\$function) {
+        Set-Item -Path function:\global:$function -Value (Get-Item function:\$function).ScriptBlock
+    }
+}
+
+# Make variables available in the global scope
+$Global:ProjectRoot = $script:ProjectRoot
+$Global:ModulePath = $script:ModulePath
+$Global:ModuleName = $script:ModuleName
+$Global:TestDomain = $script:TestDomain
+$Global:TestDC = $script:TestDC
+$Global:TestCredentials = $script:TestCredentials
+$Global:TestLogDirectory = $script:TestLogDirectory
+
+# Always set the global test mode flag
+$Global:PSNetworkAdminTestMode = $true
+
+# Mock Read-Host and other interactive functions
+function global:Read-Host { return "Q" }
+function global:MockGetHost {
+    return [PSCustomObject]@{
+        UI = [PSCustomObject]@{
+            RawUI = [PSCustomObject]@{
+                ReadKey = { param($Options) return [PSCustomObject]@{ Character = 'Q' } }
+            }
+        }
+    }
+}
+
+# Apply mocks globally
+Set-Item -Path function:global:Get-Host -Value ${function:global:MockGetHost}
