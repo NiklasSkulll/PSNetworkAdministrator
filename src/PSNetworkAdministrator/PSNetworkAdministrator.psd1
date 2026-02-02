@@ -31,6 +31,6 @@
     'Test-ExecutionContext',
     'Test-OperatingSystem', 
     'Test-PowerShellVersion',
-    'Test-DotnetVersion'
+    'Test-WpfAvailability'
     )
 }

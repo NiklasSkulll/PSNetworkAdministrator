@@ -15,5 +15,5 @@ if (-not (Test-PowerShellVersion)) { exit 1 }
 Write-Host "`nChecking current Execution Context..." -ForegroundColor Yellow
 if (-not (Test-ExecutionContext)) { exit 1 }
 
-Write-Host "`nChecking .Net availability..." -ForegroundColor Yellow
-if (-not (Test-DotnetVersion)) { exit 1 }
+Write-Host "`nChecking WPF availability..." -ForegroundColor Yellow
+if (-not (Test-WpfAvailability)) { exit 1 }
