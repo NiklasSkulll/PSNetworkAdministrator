@@ -30,6 +30,7 @@
     FunctionsToExport = @(
     'Test-ExecutionContext',
     'Test-OperatingSystem', 
-    'Test-PowerShellVersion'
+    'Test-PowerShellVersion',
+    'Test-DotnetVersion'
     )
 }
