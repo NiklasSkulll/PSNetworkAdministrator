@@ -30,12 +30,12 @@ function Test-ExecutionContext {
 
     # check if the PowerShell runs as "Administrator"
     if ($IsAdmin) {
-        Write-Host "Running as Administrator" -ForegroundColor Green
+        Write-Host "Running as Administrator." -ForegroundColor Green
         return $true
     }
     else {
-        Write-Host "Running as non-Administrator" -ForegroundColor Red
-        Write-Host "Tool needs to run as Administrator" -ForegroundColor Red
+        Write-Host "Running as non-Administrator." -ForegroundColor Red
+        Write-Host "Tool needs to run as Administrator." -ForegroundColor Red
         exit 1
     }
 }
