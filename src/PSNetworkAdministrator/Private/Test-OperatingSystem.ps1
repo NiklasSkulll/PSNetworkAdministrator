@@ -25,23 +25,15 @@ function Test-OperatingSystem {
     param()
 
     # check if the user is on Windows
+    Write-Host "`nChecking current Operation System..." -ForegroundColor Yellow
     if ($IsWindows) {
         Write-Host "Running on Windows." -ForegroundColor Green
-        return $true
+        return
     }
     elseif ($IsLinux) {
-        Write-Host "Your are currently running on Linux." -ForegroundColor Red
-        Write-Host "Windows is required for this tool." -ForegroundColor Red
-        exit 1
-    }
-    elseif ($IsMacOS) {
-        Write-Host "Your are currently running on MacOs." -ForegroundColor Red
-        Write-Host "Windows is required for this tool." -ForegroundColor Red
-        exit 1
+        throw "Running on Linux. Windows is required."
     }
     else {
-        Write-Host "Your are currently running not on Windows." -ForegroundColor Red
-        Write-Host "Windows is required for this tool." -ForegroundColor Red
-        exit 1
+        throw "Windows is required. Currently on $(if($IsMacOS){'macOS'}else{'Unknown OS'})."
     }
 }

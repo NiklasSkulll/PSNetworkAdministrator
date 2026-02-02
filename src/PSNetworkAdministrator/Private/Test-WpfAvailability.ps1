@@ -24,14 +24,13 @@ function Test-WpfAvailability{
     [CmdletBinding()]
     param()
 
+    Write-Host "`nChecking WPF availability..." -ForegroundColor Yellow
     try {
         Add-Type -AssemblyName PresentationFramework -ErrorAction Stop
         Write-Host "WPF is available." -ForegroundColor Green
-        return $true
+        return
     }
     catch {
-        Write-Host "WPF is not available." -ForegroundColor Red
-        Write-Host "This tool requires Windows Desktop runtime with WPF support." -ForegroundColor Red
-        exit 1
+        throw "WPF isn't available. This tool requires Windows Desktop runtime with WPF support."
     }
 }

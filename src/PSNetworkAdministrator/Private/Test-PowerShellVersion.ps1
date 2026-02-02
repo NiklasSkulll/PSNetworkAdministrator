@@ -31,9 +31,10 @@ function Test-PowerShellVersion {
     $UserPSVersion = $PSVersionTable.PSVersion.Major
 
     # check if the version is 7 or higher.
+    Write-Host "`nChecking current PowerShell Version..." -ForegroundColor Yellow
     if ($UserPSVersion -ge 7) {
 	    Write-Host "PowerShell Version 7 or higher is active." -ForegroundColor Green
-        return $true
+        return
     }
     else {
 	    Write-Host "PowerShell Version 7 or higher is required." -ForegroundColor Red
@@ -49,18 +50,14 @@ function Test-PowerShellVersion {
 			    try {
                     winget install --id Microsoft.PowerShell --version "7.5.4.0" --source winget --silent
                     Write-Host "`nSuccessfully installed PowerShell Version 7." -ForegroundColor Green
-                    Write-Host "Start a new Terminal and continue." -ForegroundColor Green
-                    exit 0
+                    throw "Start a new Terminal and continue."
                 }
                 catch {
-                    Write-Host "`nUpdate to PowerShell Version 7 failed. Try to install it manually." -ForegroundColor Red
-                    Write-Host "Error: $_" -ForegroundColor Red
-                    exit 1
+                    throw "Update to PowerShell Version 7 failed: $($_.Exception.Message)."
                 }
 		    }
             elseif ($InstallPSVersionFormatted -eq "N") {
-                Write-Host "`nTool needs the PowerShell Version 7 to run. Exiting..." -ForegroundColor Red
-                exit 1
+                throw "Tool needs the PowerShell Version 7 to run."
             }
             else {
                 Write-Host "`nWrong input. 'Y' or 'n' is required." -ForegroundColor Red
