@@ -1,5 +1,6 @@
 # Runtime logs
 Logs/
+logs/
 *.log
 
 # PowerShell specific
@@ -62,3 +63,16 @@ Icon?
 
 # PowerShell execution policy bypass artifacts
 *.ps1.bak
+
+# Module packages
+*.nupkg
+
+# Local config overrides  
+.config/
+
+# Build artifacts
+build/
+
+# IDE folders
+.idea/
+.vs/

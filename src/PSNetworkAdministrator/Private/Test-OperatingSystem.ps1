@@ -25,7 +25,7 @@ function Test-OperatingSystem {
     param()
 
     # check if the user is on Windows
-    Write-Host "`nChecking current Operation System..." -ForegroundColor Yellow
+    Write-Host "`nChecking current Operation System..." -ForegroundColor Cyan
     if ($IsWindows) {
         Write-Host "Running on Windows." -ForegroundColor Green
         return

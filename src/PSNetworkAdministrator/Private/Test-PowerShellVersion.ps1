@@ -31,7 +31,7 @@ function Test-PowerShellVersion {
     $UserPSVersion = $PSVersionTable.PSVersion.Major
 
     # check if the version is 7 or higher.
-    Write-Host "`nChecking current PowerShell Version..." -ForegroundColor Yellow
+    Write-Host "`nChecking current PowerShell Version..." -ForegroundColor Cyan
     if ($UserPSVersion -ge 7) {
 	    Write-Host "PowerShell Version 7 or higher is active." -ForegroundColor Green
         return
@@ -46,7 +46,7 @@ function Test-PowerShellVersion {
 		    $InstallPSVersionFormatted = $InstallPSVersion.Trim().ToUpper()
 		
 		    if ($InstallPSVersionFormatted -eq "Y") {
-                Write-Host "`nInstalling PowerShell Version 7..." -ForegroundColor Yellow
+                Write-Host "`nInstalling PowerShell Version 7..." -ForegroundColor Cyan
 			    try {
                     winget install --id Microsoft.PowerShell --version "7.5.4.0" --source winget --silent
                     Write-Host "`nSuccessfully installed PowerShell Version 7." -ForegroundColor Green

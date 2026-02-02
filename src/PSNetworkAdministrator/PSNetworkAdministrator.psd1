@@ -31,6 +31,8 @@
     'Test-ExecutionContext',
     'Test-OperatingSystem', 
     'Test-PowerShellVersion',
-    'Test-WpfAvailability'
+    'Test-WpfAvailability',
+    'Initialize-Configuration',
+    'Write-AppLogging'
     )
 }

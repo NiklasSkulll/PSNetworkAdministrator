@@ -24,7 +24,8 @@ function Test-WpfAvailability{
     [CmdletBinding()]
     param()
 
-    Write-Host "`nChecking WPF availability..." -ForegroundColor Yellow
+    # Check if WPF assemblies can load
+    Write-Host "`nChecking WPF availability..." -ForegroundColor Cyan
     try {
         Add-Type -AssemblyName PresentationFramework -ErrorAction Stop
         Write-Host "WPF is available." -ForegroundColor Green
