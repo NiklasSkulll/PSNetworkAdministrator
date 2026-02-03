@@ -3,10 +3,22 @@
 # ------------------------------
 
 # import the module "PSNetworkAdministrator"
-Import-Module "$PSScriptRoot\..\PSNetworkAdministrator\PSNetworkAdministrator.psd1" -Force
+try {
+    Import-Module "$PSScriptRoot\..\PSNetworkAdministrator\PSNetworkAdministrator.psd1" -Force
+}
+catch {
+    Write-Host "Import-Module 'PSNetworkAdministrator.psd1' failed." -ForegroundColor Red
+    Write-Host "Possible reasons: PowerShell Version is below 7" -ForegroundColor Red
+
+    Write-Host "`nView Module information for more context:" -ForegroundColor Red
+    $ViewManifest = Import-PowerShellDataFile -Path "$PSScriptRoot\..\PSNetworkAdministrator\PSNetworkAdministrator.psd1"
+    $ViewManifest
+}
 
 # load configuration
 $script:AppConfiguration = Initialize-Configuration
+
+# display PSNetworkAdministrator ASCII + Version
 Write-Host ""
 Write-Host "  ╔═╗╔═╗╔╗╔╔═╗╔╦╗╦ ╦╔═╗╦═╗╦╔═" -ForegroundColor Magenta
 Write-Host "  ╠═╝╚═╗║║║║╣  ║ ║║║║ ║╠╦╝╠╩╗" -ForegroundColor Magenta
