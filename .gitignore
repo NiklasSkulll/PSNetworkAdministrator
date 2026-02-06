@@ -8,6 +8,19 @@ logs/
 *.psd1~
 *.psm1~
 
+# .NET / C# / Visual Studio
+bin/
+obj/
+*.pdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.dll
+*.exe
+!build/*.exe
+!build/*.dll
+
 # Windows specific
 Thumbs.db
 ehthumbs.db
