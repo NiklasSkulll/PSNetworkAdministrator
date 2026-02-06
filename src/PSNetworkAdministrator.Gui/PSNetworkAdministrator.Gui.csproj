@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- general configurations -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
@@ -8,8 +9,24 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <!-- include the PowerShell package for version 7.5.4 -->
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.4" />
+  </ItemGroup>
+
+  <!-- copy important backend folders -->
+  <ItemGroup>
+    <!-- copy PowerShell module and functions -->
+    <None Include="..\PSNetworkAdministrator\**\*.*">
+      <Link>modules\PSNetworkAdministrator\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <!-- copy config file -->
+    <None Include="..\..\config\**\*.*">
+      <Link>config\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
