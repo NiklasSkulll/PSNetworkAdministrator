@@ -9,6 +9,7 @@
 - [Further steps](#Further%20steps)
 	- [1 Create the WPF project](#1%20Create%20the%20WPF%20project)
 	- [2 Decide the runtime "deployment layout"](#2%20Decide%20the%20runtime%20"deployment%20layout")
+- [Feature Plan](#Feature%20Plan)
 
 ---
 
@@ -176,3 +177,40 @@ dotnet add package Microsoft.PowerShell.SDK --version 7.5.4
 - `.\config\config.psd1`
 
 Then the C# `ModuleLocator` builds paths from `AppContext.BaseDirectory`.
+
+---
+
+## Feature Plan
+
+**What should this App can do?**
+- _Domain-Detection:_
+	- detect, if the user/pc, which is starting the app, is in a Domain:
+		- if not in a Domain, user should add an Domain:
+			- type in the name of the name.
+- _Domain-Adding:_
+	- possible to administrate multiple Domains, by adding them (User-Input).
+- _Domain-Authentication:_
+	- "login" as Domain-Administrator for advanced powershell-commands (credentials for safety).
+	- only when necessary.
+- _Overview:_
+	- How many servers are in this Domain? (how many online/offline?)
+	- How many clients are in this Domain? (how many online/offline?)
+	- How many users are in this Domain?
+	- How many policies are in the Domain?
+- _Server-List:_
+	- list all Server from a Domain (online and offline Server).
+	- list with IP, servernames (DNS-Names), offline/online-status, system-infos: storage, RAM, CPU, etc.
+- _Client-List:_
+	- list all clients from a Domain (online and offline Server).
+	- list with IP, clientnames (DNS-Names), offline/online-status, system-infos: storage, RAM, CPU, etc.
+- _User-List:_
+	- list all users from a Domain.
+	- list with policies-ID.
+	- group users by the department (metadata from user) (like Order, Sales, etc.)
+	- option to add new users to AD
+- _Policies-List:_
+	- Which policies are active?
+	- list policies with ID, context (user, computer), which kind of policy? (Security, etc.)
+	- Option to create a new policy
+- _DNS/AD/DHCP-Administration:_
+	- administrate the network.
