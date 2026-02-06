@@ -25,11 +25,12 @@ function Test-WpfAvailability{
     param()
 
     # Check if WPF assemblies can load
-    Write-Host "`nChecking WPF availability..." -ForegroundColor Cyan
     try {
         Add-Type -AssemblyName PresentationFramework -ErrorAction Stop
-        Write-Host "WPF is available." -ForegroundColor Green
-        return
+        return [PSCustomObject]@{
+            Status = "Passed"
+            Message = "WPF is available."
+        }
     }
     catch {
         throw "WPF isn't available. This tool requires Windows Desktop runtime with WPF support."

@@ -1,0 +1,178 @@
+# PSNetworkAdministrator Tool: Plan
+
+**Table of contents:**
+- [Technology](#Technology)
+- [Running PowerShell with C-Sharp](#Running%20PowerShell%20with%20C-Sharp)
+- [Current structure and planned structure](#Current%20structure%20and%20planned%20structure)
+	- [Current structure](#Current%20structure)
+	- [Planned structure](#Planned%20structure)
+- [Further steps](#Further%20steps)
+	- [1 Create the WPF project](#1%20Create%20the%20WPF%20project)
+	- [2 Decide the runtime "deployment layout"](#2%20Decide%20the%20runtime%20"deployment%20layout")
+
+---
+
+## Technology
+
+| **Tool**   | **Version**                      | **Usage**                                                   |
+| ---------- | -------------------------------- | ----------------------------------------------------------- |
+| PowerShell | `Microsoft.PowerShell.SDK 7.5.4` | backend, as the "engine"                                    |
+| C#         | `.NET 9`                         | frontend, for a maintainable, scalable UI (real MVVM, etc.) |
+| WPF        | `net9.0-windows`                 | frontend, UI-Tool                                           |
+
+---
+
+## Running PowerShell with C-Sharp
+
+**Host PowerShell inside the WPF app (in-process):**
+- add the `PowerShell SDK NuGet package` and run the module in a runspace.
+- Microsoft explicitly describes "hosting" PowerShell in .NET apps and which NuGet packages to use: [Microsoft Learn](https://learn.microsoft.com/en-us/powershell/scripting/dev-cross-plat/choosing-the-right-nuget-package?view=powershell-7.5&utm_source=chatgpt.com "Choosing the right PowerShell NuGet package for your .NET project")
+
+| **Pros**                                                  | **Cons**                                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------------------------ |
+| single EXE deployment is easier.                          | `.NET target framework` must be aligned with the PowerShell SDK version. |
+| control the PS engine version via NuGet.                  |                                                                          |
+| no dependency on `pwsh installed` (unless it's required). |                                                                          |
+
+---
+
+## Current structure and planned structure
+
+### Current structure
+
+```
+PSNetworkAdministrator/
+├─ .gitignore
+├─ README.md
+├─ CODEOWNERS
+├─ LICENSE
+│
+├─ src/
+│  ├─ PSNetworkAdministrator/
+│  │  ├─ PSNetworkAdministrator.psd1
+│  │  ├─ PSNetworkAdministrator.psm1
+│  │  ├─ Public/
+│  │  ├─ Private/
+│  │  │  ├─ Initialize-Configuration.ps1
+│  │  │  ├─ Test-ExecutionContext.ps1
+│  │  │  ├─ Test-OperatingSystem.ps1
+│  │  │  ├─ Test-PowerShellVersion.ps1
+│  │  │  ├─ Test-WpfAvailability.ps1
+│  │  │  └─ Write-AppLogging.ps1
+│  │  │
+│  │  └─ Services/
+│  │
+│  └─ PSNetworkAdministrator.Gui/
+│     ├─ Start-PSNetworkAdministrator.ps1
+│     ├─ Views/
+│     ├─ ViewModels/
+│     ├─ Controls/
+│     └─ Assets/
+│
+├─ config/
+│  └─ config.psd1
+│
+├─ docs/
+│  └─ PowerShell_Structure_Best_Practices.md
+│
+├─ tests/
+│  ├─ unit/
+│  ├─ integration/
+│  └─ TestHelpers/
+│
+├─ logs/
+│
+├─ build/
+│
+├─ .config/
+│
+└─ .github/
+```
+
+**The PowerShell Module and engine is already separated from the UI in the `src/`-folder:**
+- `src/PSNetworkAdministrator/` (module / engine)
+- `src/PSNetworkAdministrator.Gui/` (UI shell)
+
+### Planned structure
+
+```
+PSNetworkAdministrator/
+├─ .gitignore
+├─ README.md
+├─ CODEOWNERS
+├─ LICENSE
+│
+├─ src/
+│  ├─ PSNetworkAdministrator/          # PowerShell module (engine)
+│  │  ├─ PSNetworkAdministrator.psd1
+│  │  ├─ PSNetworkAdministrator.psm1
+│  │  ├─ Public/
+│  │  ├─ Private/
+│  │  │  ├─ Initialize-Configuration.ps1
+│  │  │  ├─ Test-ExecutionContext.ps1
+│  │  │  ├─ Test-OperatingSystem.ps1
+│  │  │  ├─ Test-PowerShellVersion.ps1
+│  │  │  ├─ Test-WpfAvailability.ps1
+│  │  │  └─ Write-AppLogging.ps1
+│  │  │
+│  │  └─ Services/
+│  │
+│  └─ PSNetworkAdministrator.Gui/      # C# WPF project root (contains .csproj)
+│     ├─ PSNetworkAdministrator.Gui.csproj
+│     ├─ App.xaml
+│     ├─ Views/
+│     ├─ ViewModels/
+│     ├─ Controls/
+│     ├─ Assets/
+│     └─ Services/
+│
+├─ config/
+│  └─ config.psd1
+│
+├─ docs/
+│  └─ PowerShell_Structure_Best_Practices.md
+│
+├─ tests/
+│  ├─ unit/
+│  ├─ integration/
+│  └─ TestHelpers/
+│
+├─ logs/
+│
+├─ build/
+│
+├─ .config/
+│
+└─ .github/
+```
+
+**Planned changes:**
+- the `PSNetworkAdministrator.Gui` becomes a real C# WPF project.
+
+---
+
+## Further steps
+
+### 1 Create the WPF project
+
+**Create the WPF project at `src/PSNetworkAdministrator.Gui`:**
+- _because the plan is `.NET 9` + `PS SDK 7.5.4`, do:_
+```powershell
+dotnet new wpf -n PSNetworkAdministrator.Gui -o .\src\PSNetworkAdministrator.Gui -f net9.0-windows
+```
+
+```powershell
+cd .\src\PSNetworkAdministrator.Gui
+```
+
+```powershell
+dotnet add package Microsoft.PowerShell.SDK --version 7.5.4
+```
+
+### 2 Decide the runtime "deployment layout"
+
+**Recommended layout in output folder (so the C# app can import reliably):**
+- `.\Modules\PSNetworkAdministrator\PSNetworkAdministrator.psd1`
+- `.\config\config.psd1`
+
+Then the C# `ModuleLocator` builds paths from `AppContext.BaseDirectory`.

@@ -25,15 +25,16 @@ function Test-OperatingSystem {
     param()
 
     # check if the user is on Windows
-    Write-Host "`nChecking current Operation System..." -ForegroundColor Cyan
     if ($IsWindows) {
-        Write-Host "Running on Windows." -ForegroundColor Green
-        return
+        return [PSCustomObject]@{
+            Status = "Passed"
+            Message = "Running on Windows."
+        }
     }
     elseif ($IsLinux) {
-        throw "Running on Linux. Windows is required."
+        throw "Running on Linux. Windows is required for this Tool."
     }
     else {
-        throw "Windows is required. Currently on $(if($IsMacOS){'macOS'}else{'Unknown OS'})."
+        throw "Windows is required for this Tool. Currently on $(if($IsMacOS){'macOS'}else{'Unknown OS'})."
     }
 }

@@ -8,7 +8,7 @@ function Write-AppLogging {
         [Parameter(Mandatory)]
         [string]$LoggingMessage,
         
-        [ValidateSet('Info', 'Success', 'Warning', 'Error')]
+        [ValidateSet('Info', 'Passed', 'Warning', 'Error')]
         [string]$LoggingLevel = 'Info',
         
         [string]$LoggingPath
@@ -29,15 +29,6 @@ function Write-AppLogging {
         Add-Content -Path $LoggingPath -Value $LoggingEntry
     }
     catch {
-        Write-Host "Failed to write log into file: $($_.Exception.Message)." -ForegroundColor Red
+        throw "Failed to write log into file in '$LoggingPath': $($_.Exception.Message)."
     }
-    
-    # write to console with color
-    $MessageColor = switch ($LoggingLevel) {
-        'Info'    { 'Cyan' }
-        'Success' { 'Green' }
-        'Warning' { 'Yellow' }
-        'Error'   { 'Red' }
-    }
-    Write-Host $LoggingEntry -ForegroundColor $MessageColor
 }
