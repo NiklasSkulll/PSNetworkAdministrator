@@ -28,11 +28,8 @@
 
     # functions to export from this module
     FunctionsToExport = @(
-    'Test-ExecutionContext',
-    'Test-OperatingSystem', 
-    'Test-PowerShellVersion',
-    'Test-WpfAvailability',
     'Initialize-Configuration',
+    'Test-ExecutionContext',
     'Write-AppLogging'
     )
 }

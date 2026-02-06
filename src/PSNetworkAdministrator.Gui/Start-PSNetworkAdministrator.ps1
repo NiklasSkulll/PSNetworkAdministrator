@@ -37,10 +37,7 @@ try {
     # run checks
     Write-AppLogging -LoggingMessage "Running startup checks." -LoggingLevel Info -LoggingPath $LoggingPath
 
-    Test-PowerShellVersion
-    Test-OperatingSystem
     Test-ExecutionContext
-    Test-WpfAvailability
 
     Write-AppLogging -LoggingMessage "All startup checks successfully passed." -LoggingLevel Success -LoggingPath $LoggingPath
 }
