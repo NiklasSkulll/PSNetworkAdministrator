@@ -9,8 +9,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <!-- include the PowerShell package for version 7.5.4 -->
+  <!-- include packages: LiveCharts for modern/animated charts, Material Design, PowerShell version 7.5.4 -->
   <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.4" />
   </ItemGroup>
 
