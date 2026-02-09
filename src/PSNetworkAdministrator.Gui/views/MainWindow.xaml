@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PSNetworkAdministrator.Gui"
         xmlns:views="clr-namespace:PSNetworkAdministrator.Gui.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="PSNetworkAdministrator" Height="450" Width="800"
         WindowStyle="None"
@@ -13,12 +14,12 @@
         ResizeMode="CanResize">
     
     <!-- visible border/background because window is transparent -->
-    <Border BorderBrush="#1E1E1E" BorderThickness="1" Background="White">
+    <materialDesign:Card UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp4">
         <!-- MainWindow structure -->
         <Grid>
             <!-- define rows of the grid -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>    <!-- title bar (40px) -->
+                <RowDefinition Height="45"/>    <!-- title bar (45px) -->
                 <RowDefinition Height="*"/>     <!-- main content -->
             </Grid.RowDefinitions>
 
@@ -37,7 +38,7 @@
                 <views:DomainList Grid.Column="0"/>
 
                 <!-- define main content -->
-                <Border Grid.Column="1">
+                <Border Grid.Column="1" Background="#F5F5F5">
                     <TextBlock Text="Main Content"/>
                 </Border>
             </Grid>
@@ -45,5 +46,5 @@
             <!-- add dialog window from "\views\DialogWindow.xaml" -->
             <views:DialogWindow Grid.RowSpan="2"/>
         </Grid>
-    </Border>
+    </materialDesign:Card>
 </Window>

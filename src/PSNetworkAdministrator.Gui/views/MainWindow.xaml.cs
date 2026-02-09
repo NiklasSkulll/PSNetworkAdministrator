@@ -16,10 +16,24 @@ public partial class MainWindow : Window
 
         // subscribe to TitleBar events
         _viewModel.TitleBarVM.MinimizeRequested += (s, e) => WindowState = WindowState.Minimized;
-        _viewModel.TitleBarVM.MaximizeRequested += (s, e) => WindowState = WindowState == WindowState.Maximized 
-            ? WindowState.Normal 
-            : WindowState.Maximized;
+        _viewModel.TitleBarVM.MaximizeRequested += (s, e) =>
+        {
+            WindowState = WindowState == WindowState.Maximized 
+                ? WindowState.Normal 
+                : WindowState.Maximized;
+            // update ViewModel state after changing window state
+            _viewModel.TitleBarVM.IsMaximized = (WindowState == WindowState.Maximized);
+        };
         _viewModel.TitleBarVM.CloseRequested += (s, e) => Close();
+
+        // subscribe to window StateChanged event to track all state changes
+        this.StateChanged += (s, e) => 
+        {
+            _viewModel.TitleBarVM.IsMaximized = (WindowState == WindowState.Maximized);
+        };
+
+        // set initial state
+        _viewModel.TitleBarVM.IsMaximized = (WindowState == WindowState.Maximized);
     }
 
     // drag window when app window is clicked
@@ -30,6 +44,8 @@ public partial class MainWindow : Window
             WindowState = WindowState == WindowState.Maximized 
                 ? WindowState.Normal 
                 : WindowState.Maximized;
+            // update ViewModel after double-click maximize/restore
+            _viewModel.TitleBarVM.IsMaximized = (WindowState == WindowState.Maximized);
         }
         else
         {
