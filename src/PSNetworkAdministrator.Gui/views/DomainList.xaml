@@ -1,0 +1,13 @@
+<UserControl x:Class="PSNetworkAdministrator.Gui.Views.DomainList"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- define sidebar/Domain list -->
+    <Border Grid.Column="0">
+        <StackPanel Background="#2C3E50" Orientation="Vertical">
+            <!-- Domain list, binds to DomainListVM.Domains -->
+            <ListBox ItemsSource="{Binding DomainListVM.Domains}" SelectedItem="{Binding DomainListVM.SelectedDomain}" Background="Transparent" BorderThickness="0"/>
+            <!-- "+ Domain" button, binds to DomainListVM.AddDomainCommand -->
+            <Button Content="+ Domain" Margin="10" Command="{Binding DomainListVM.AddDomainCommand}" Background="#34495E" Foreground="White"/>
+        </StackPanel>
+    </Border>
+</UserControl>

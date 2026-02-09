@@ -1,0 +1,16 @@
+<UserControl x:Class="PSNetworkAdministrator.Gui.Views.TitleBar"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- define title bar -->
+    <Grid Background="#1E88E5">
+        <!-- title -->
+        <TextBlock Text="PSNetworkAdministrator" Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <!-- window control buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="—" Width="40" Height="40" Command="{Binding TitleBarVM.MinimizeCommand}" Background="Transparent" Foreground="White" BorderThickness="0"/>
+            <Button Content="□" Width="40" Height="40" Command="{Binding TitleBarVM.MaximizeCommand}" Background="Transparent" Foreground="White" BorderThickness="0"/>
+            <Button Content="✕" Width="40" Height="40" Command="{Binding TitleBarVM.CloseCommand}" Background="#E53935" Foreground="White" BorderThickness="0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

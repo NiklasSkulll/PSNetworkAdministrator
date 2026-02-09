@@ -199,7 +199,7 @@ Then the C# `ModuleLocator` builds paths from `AppContext.BaseDirectory`.
 	- How many policies are in the Domain?
 - _Server-List:_
 	- list all Server from a Domain (online and offline Server).
-	- list with IP, servernames (DNS-Names), offline/online-status, system-infos: storage, RAM, CPU, etc.
+	- list with IP, servernames (DNS-Names), offline/online-status, system-infos: storage, RAM, CPU, Update available (check current OS version and compare with the newest available one) etc.
 - _Client-List:_
 	- list all clients from a Domain (online and offline Server).
 	- list with IP, clientnames (DNS-Names), offline/online-status, system-infos: storage, RAM, CPU, etc.

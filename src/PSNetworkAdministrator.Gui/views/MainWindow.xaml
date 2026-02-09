@@ -1,0 +1,49 @@
+﻿<Window x:Class="PSNetworkAdministrator.Gui.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PSNetworkAdministrator.Gui"
+        xmlns:views="clr-namespace:PSNetworkAdministrator.Gui.Views"
+        mc:Ignorable="d"
+        Title="PSNetworkAdministrator" Height="450" Width="800"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResize">
+    
+    <!-- visible border/background because window is transparent -->
+    <Border BorderBrush="#1E1E1E" BorderThickness="1" Background="White">
+        <!-- MainWindow structure -->
+        <Grid>
+            <!-- define rows of the grid -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>    <!-- title bar (40px) -->
+                <RowDefinition Height="*"/>     <!-- main content -->
+            </Grid.RowDefinitions>
+
+            <!-- add title bar from "\views\TitleBar.xaml" -->
+            <views:TitleBar Grid.Row="0" MouseLeftButtonDown="TitleBarMouseLeftButtonDown"/>
+
+            <!-- define main content -->
+            <Grid Grid.Row="1">
+                <!-- define columns of the grid -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>    <!-- fixed 200px -->
+                    <ColumnDefinition Width="*"/>      <!-- takes remaining space -->
+                </Grid.ColumnDefinitions>
+
+                <!-- add sidebar from "\views\DomainList.xaml" -->
+                <views:DomainList Grid.Column="0"/>
+
+                <!-- define main content -->
+                <Border Grid.Column="1">
+                    <TextBlock Text="Main Content"/>
+                </Border>
+            </Grid>
+            
+            <!-- add dialog window from "\views\DialogWindow.xaml" -->
+            <views:DialogWindow Grid.RowSpan="2"/>
+        </Grid>
+    </Border>
+</Window>
