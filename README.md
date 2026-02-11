@@ -21,49 +21,66 @@
 
 ```
 PSNetworkAdministrator/
-├─ .gitignore
-├─ README.md
-├─ CODEOWNERS
-├─ LICENSE
 │
-├─ src/
-│  ├─ PSNetworkAdministrator/
-│  │  ├─ PSNetworkAdministrator.psd1
-│  │  ├─ PSNetworkAdministrator.psm1
-│  │  ├─ Public/
-│  │  ├─ Private/
-│  │  │  ├─ Initialize-Configuration.ps1
-│  │  │  ├─ Test-ExecutionContext.ps1
-│  │  │  ├─ Test-OperatingSystem.ps1
-│  │  │  ├─ Test-PowerShellVersion.ps1
-│  │  │  ├─ Test-WpfAvailability.ps1
-│  │  │  └─ Write-AppLogging.ps1
-│  │  │
-│  │  └─ Services/
-│  │
-│  └─ PSNetworkAdministrator.Gui/
-│     ├─ Start-PSNetworkAdministrator.ps1
-│     ├─ Views/
-│     ├─ ViewModels/
-│     ├─ Controls/
-│     └─ Assets/
+├── .config/                              # Configuration directory
+├── .git/                                 # Git repository metadata
+├── .github/                              # GitHub-specific files (currently empty)
+├── .gitignore                            # Git ignore rules
 │
-├─ config/
-│  └─ config.psd1
+├── build/                                # Build output directory (empty)
+├── config/
+│   └── config.psd1                       # PowerShell configuration data file
 │
-├─ docs/
-│  └─ PowerShell_Structure_Best_Practices.md
+├── docs/
+│   ├── PowerShell_Structure_Best_Practices.md
+│   └── PSNetworkAdministrator_Tool_Plan.md
 │
-├─ tests/
-│  ├─ unit/
-│  ├─ integration/
-│  └─ TestHelpers/
+├── logs/                                 # Application logs directory
 │
-├─ logs/
+├── src/
+│   ├── PSNetworkAdministrator/           # PowerShell Module
+│   │   ├── PSNetworkAdministrator.psd1   # Module manifest
+│   │   ├── PSNetworkAdministrator.psm1   # Module script file
+│   │   ├── Private/                      # Internal helper functions
+│   │   │   ├── Initialize-Configuration.ps1
+│   │   │   ├── Test-ExecutionContext.ps1
+│   │   │   └── Write-AppLogging.ps1
+│   │   ├── Public/                       # Exported cmdlets (empty)
+│   │   └── Services/                     # Service layer (empty)
+│   │
+│   └── PSNetworkAdministrator.Gui/       # WPF GUI Application (.NET 9.0)
+│       ├── App.xaml                      # Application definition
+│       ├── App.xaml.cs                   # Application code-behind
+│       ├── AssemblyInfo.cs               # Assembly metadata
+│       ├── PSNetworkAdministrator.Gui.csproj  # Project file
+│       │
+│       ├── converters/                   # XAML value converters
+│       │   └── BoolToVisibilityConverter.cs
+│       │
+│       ├── models/                       # Data models (empty)
+│       │
+│       ├── viewmodels/                   # MVVM ViewModels
+│       │   ├── DomainListViewModel.cs
+│       │   ├── MainWindowViewModel.cs
+│       │   ├── RelayCommand.cs
+│       │   └── TitleBarViewModel.cs
+│       │
+│       ├── views/                        # XAML views
+│       │   ├── DialogWindow.xaml / .cs
+│       │   ├── DomainList.xaml / .cs
+│       │   ├── MainWindow.xaml / .cs
+│       │   └── TitleBar.xaml / .cs
+│       │
+│       ├── bin/Debug/net9.0-windows/     # Build output
+│       └── obj/                          # Intermediate build files
 │
-├─ build/
+├── tests/
+│   ├── integration/                      # Integration tests (empty)
+│   ├── unit/                             # Unit tests (empty)
+│   └── TestHelpers/                      # Test utilities (empty)
 │
-├─ .config/
-│
-└─ .github/
+├── CODEOWNERS                            # GitHub code ownership
+├── LICENSE                               # License file
+├── PSNetworkAdministrator.sln            # Visual Studio solution file
+└── README.md                             # Project documentation
 ```

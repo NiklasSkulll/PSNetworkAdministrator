@@ -28,8 +28,10 @@
 
     # functions to export from this module
     FunctionsToExport = @(
-    'Initialize-Configuration',
-    'Test-ExecutionContext',
-    'Write-AppLogging'
+        'Add-Domain',
+        'Add-DomainCredentials',
+        'Get-DomainCredentials',
+        'Initialize-Domain',
+        'Remove-DomainCredentials'
     )
 }

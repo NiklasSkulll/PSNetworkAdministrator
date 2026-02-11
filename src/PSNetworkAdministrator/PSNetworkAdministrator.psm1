@@ -13,3 +13,19 @@ Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
 Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -ErrorAction SilentlyContinue | ForEach-Object {
     . $_.FullName
 }
+
+# check and install CredentialManager if needed
+if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
+    Install-Module -Name CredentialManager -Force -Scope CurrentUser
+}
+Import-Module CredentialManager
+
+# load config and initialize the path for logs
+try {
+    $script:ModuleConfig = Initialize-Configuration
+    $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath
+}
+catch {
+    $script:LoggingPath = "logs\app.log"
+    Write-Warning "Failed to load config, using default log path: $($script:LoggingPath)"
+}

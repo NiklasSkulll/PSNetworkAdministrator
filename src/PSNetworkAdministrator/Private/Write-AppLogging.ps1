@@ -8,10 +8,10 @@ function Write-AppLogging {
         [Parameter(Mandatory)]
         [string]$LoggingMessage,
         
-        [ValidateSet('Info', 'Passed', 'Warning', 'Error')]
+        [ValidateSet('Info', 'Warning', 'Error')]
         [string]$LoggingLevel = 'Info',
         
-        [string]$LoggingPath
+        [string]$LoggingPath = $script:LoggingPath
     )
     
     # create log directory, if it doesn't exist
