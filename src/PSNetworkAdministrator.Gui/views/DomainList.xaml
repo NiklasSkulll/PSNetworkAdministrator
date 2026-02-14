@@ -1,0 +1,29 @@
+<UserControl x:Class="PSNetworkAdministrator.Gui.Views.DomainList"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <!-- define sidebar/Domain list -->
+    <Border Grid.Column="0">
+        <StackPanel Background="#2C3E50" Orientation="Vertical">
+            <!-- Domain list, binds to DomainListVM.Domains -->
+            <ListBox ItemsSource="{Binding DomainListVM.Domains}" SelectedItem="{Binding DomainListVM.SelectedDomain}" Style="{StaticResource MaterialDesignNavigationListBox}" Background="Transparent" Foreground="White" BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <materialDesign:PackIcon Kind="Domain" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Text="{Binding}" Style="{StaticResource MaterialDesignCaptionTextBlock}" VerticalAlignment="Center" Foreground="White"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- "+ Domain" button, binds to DomainListVM.AddDomainCommand -->
+            <Button Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding DomainListVM.AddDomainCommand}" Margin="3" ToolTip="Add a new Domain">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Plus" Margin="0,1,3,0"/>
+                    <TextBlock Text="DOMAIN" Style="{StaticResource MaterialDesignButtonTextBlock}"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>
