@@ -18,11 +18,14 @@ Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -ErrorAction SilentlyContinue |
 if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
     Install-Module -Name CredentialManager -Force -Scope CurrentUser
 }
-Import-Module CredentialManager -ErrorAction Stop
 
+# check ActiveDirectory
 if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
     throw "ActiveDirectory module not found. Install RSAT tools: Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
 }
+
+# import Modules
+Import-Module CredentialManager -ErrorAction Stop
 Import-Module ActiveDirectory -ErrorAction Stop
 
 # load config and initialize the path for logs
