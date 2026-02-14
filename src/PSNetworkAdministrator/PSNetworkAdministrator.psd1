@@ -29,6 +29,7 @@
     # functions to export from this module
     FunctionsToExport = @(
         'Add-Domain',
+        'Add-DomainComputers',
         'Add-DomainCredentials',
         'Get-DomainCredentials',
         'Initialize-Domain',
