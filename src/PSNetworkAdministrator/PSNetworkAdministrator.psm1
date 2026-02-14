@@ -28,12 +28,13 @@ if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
 Import-Module CredentialManager -ErrorAction Stop
 Import-Module ActiveDirectory -ErrorAction Stop
 
-# load config and initialize the path for logs
+# load config and initialize the path and max logging size for logs
 try {
     $script:ModuleConfig = Initialize-Configuration
     $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath
+    $script:MaxLogSizeMB = $script:ModuleConfig.Logging.MaxLoggingSizeMB
 }
 catch {
-    $script:LoggingPath = "logs\app.log"
+    $script:LoggingPath = "logs/PSNetAdmin.log"
     Write-Warning "Failed to load config, using default log path: $($script:LoggingPath)"
 }

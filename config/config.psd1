@@ -9,7 +9,7 @@
     Logging = @{
         Enabled = $true
         LoggingLevel = 'Info'
-        LoggingPath = 'logs/app.log'
+        LoggingPath = 'logs/PSNetAdmin.log'
         MaxLoggingSizeMB = 10
     }
 

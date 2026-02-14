@@ -1,24 +1,38 @@
 function Test-ExecutionContext {
     <#
     .SYNOPSIS
-        Validates that the script is running as "Administrator".
+        Validates that the script is running with Administrator privileges.
     
     .DESCRIPTION
-        Checks the current user status using the current user Principal and IsInRole.
-        If the script doesn't run as "Administrator", displays an error message and exits the script with code 1.
+        The Test-ExecutionContext function checks whether the current PowerShell session is running with Administrator privileges.
+        It uses the current user's security principal and verifies membership in the Administrator role.
+        This function is critical for operations that require elevated permissions, such as Active Directory management
+        and system configuration changes.
     
     .EXAMPLE
         Test-ExecutionContext
-        
-        Checks if running as "Administrator". Exits if not running as administrator.
+    
+        Checks if running as Administrator and returns a status object if successful.
+    
+    .INPUTS
+        None. This function does not accept pipeline input.
     
     .OUTPUTS
-        None. The function writes to the host and may exit the script.
+        PSCustomObject
+        Returns an object with:
+        - Status: "Passed" if running as Administrator
+        - Message: Confirmation message about Administrator status
+    
+        Throws an exception if not running as Administrator.
     
     .NOTES
         Author: Niklas Schneider
         Version: 1.0
-        Requires: PowerShell 7.0+
+        Requires: PowerShell 7.0+, Windows Operating System
+
+        This function is intended for internal use only (Private function).
+        The function will throw a terminating error if Administrator privileges are not detected.
+        It should be called early in script execution to ensure proper permissions.
     #>
 
     [CmdletBinding()]
@@ -28,7 +42,7 @@ function Test-ExecutionContext {
     $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     $IsAdmin = $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-    # check if the PowerShell runs as "Administrator", if not = Error
+    # check if the PowerShell runs as "Administrator"
     if ($IsAdmin) {
         return [PSCustomObject]@{
             Status = "Passed"
