@@ -1,16 +1,25 @@
-# Build artifacts
-Build/artifacts/
-Build/output/
-Build/temp/
-
 # Runtime logs
 Logs/
+logs/
 *.log
 
 # PowerShell specific
 *.ps1xml
 *.psd1~
 *.psm1~
+
+# .NET / C# / Visual Studio
+bin/
+obj/
+*.pdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.dll
+*.exe
+!build/*.exe
+!build/*.dll
 
 # Windows specific
 Thumbs.db
@@ -67,3 +76,16 @@ Icon?
 
 # PowerShell execution policy bypass artifacts
 *.ps1.bak
+
+# Module packages
+*.nupkg
+
+# Local config overrides  
+.config/
+
+# Build artifacts
+build/
+
+# IDE folders
+.idea/
+.vs/
