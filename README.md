@@ -8,10 +8,10 @@
 ```
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue.svg)](https://github.com/PowerShell/PowerShell)
-[![PSEdition](https://img.shields.io/badge/PSEdition-Desktop%20%7C%20Core-blue.svg)](https://github.com/PowerShell/PowerShell)
-[![Module Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)](PSNetworkAdministrator/PSNetworkAdministrator.psd1)
-[![Pester Tests](https://img.shields.io/badge/Tests-Pester%205.0-brightgreen.svg)](Tests/Start-Tests.ps1)
+[![PowerShell](https://img.shields.io/badge/PowerShell-7.5.4-blue.svg)](https://github.com/PowerShell/PowerShell)
+[![.NET](https://img.shields.io/badge/.NET-9.0-purple.svg)](https://dotnet.microsoft.com/)
+[![Module Version](https://img.shields.io/badge/Version-1.0-brightgreen.svg)](src/PSNetworkAdministrator/PSNetworkAdministrator.psd1)
+[![GUI Framework](https://img.shields.io/badge/GUI-WPF%20%7C%20Material%20Design-blueviolet.svg)](src/PSNetworkAdministrator.Gui/)
 
 ---
 
