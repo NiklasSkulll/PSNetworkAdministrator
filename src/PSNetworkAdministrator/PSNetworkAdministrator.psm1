@@ -4,29 +4,38 @@
 # generated on: 02.02.2026
 # ------------------------------
 
-# dot-source all private functions
-Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
-    . $_.FullName
+# dot-source all private, public and service functions
+try {
+    Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
+        . $_.FullName
+    }
+    Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -ErrorAction Stop | ForEach-Object {
+        . $_.FullName
+    }
+    Get-ChildItem -Path "$PSScriptRoot\Services\*.ps1" -ErrorAction Stop | ForEach-Object {
+        . $_.FullName
+    }
+}
+catch {
+    throw "Failed to dot-source all private, public and service functions: $($_.Exception.Message)"
 }
 
-# dot-source all public functions
-Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -ErrorAction SilentlyContinue | ForEach-Object {
-    . $_.FullName
-}
-
-# check and install CredentialManager if needed
+# check module availability: CredentialManager, ActiveDirectory
 if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
-    Install-Module -Name CredentialManager -Force -Scope CurrentUser
+    throw "ActiveDirectory module not found. Install Modul: Install-Module -Name CredentialManager -Force -Scope CurrentUser"
 }
-
-# check ActiveDirectory
 if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
     throw "ActiveDirectory module not found. Install RSAT tools: Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
 }
 
-# import Modules
-Import-Module CredentialManager -ErrorAction Stop
-Import-Module ActiveDirectory -ErrorAction Stop
+# import modules: CredentialManager, ActiveDirectory
+try {
+    Import-Module CredentialManager -ErrorAction Stop
+    Import-Module ActiveDirectory -ErrorAction Stop
+}
+catch {
+    throw "Failed to import modules: $($_.Exception.Message)"
+}
 
 # load config and initialize the path and max logging size for logs
 try {
@@ -35,6 +44,6 @@ try {
     $script:MaxLogSizeMB = $script:ModuleConfig.Logging.MaxLoggingSizeMB
 }
 catch {
-    $script:LoggingPath = "logs/PSNetAdmin.log"
+    $script:LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
     Write-Warning "Failed to load config, using default log path: $($script:LoggingPath)"
 }

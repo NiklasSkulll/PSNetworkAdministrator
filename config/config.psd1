@@ -9,7 +9,7 @@
     Logging = @{
         Enabled = $true
         LoggingLevel = 'Info'
-        LoggingPath = 'logs/PSNetAdmin.log'
+        LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
         MaxLoggingSizeMB = 10
     }
 

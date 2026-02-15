@@ -45,7 +45,7 @@ function Write-AppLogging {
 
     .NOTES
         Author: Niklas Schneider
-        Version: 1.0
+        Version: 1.0.0
         Requires: PowerShell 7.0+
     
         This function is intended for internal use only (Private function).

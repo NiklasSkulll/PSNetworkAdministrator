@@ -27,7 +27,7 @@ function Initialize-Domain {
 
     .NOTES
         Author: Niklas Schneider
-        Version: 1.0
+        Version: 1.0.0
         Requires: PowerShell 7.0+, Windows Operating System, Write-AppLogging function
     
         This is a public function exported by the PSNetworkAdministrator module.

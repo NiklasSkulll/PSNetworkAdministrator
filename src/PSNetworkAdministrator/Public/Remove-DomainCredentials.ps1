@@ -34,7 +34,7 @@ function Remove-DomainCredentials {
     
     .NOTES
         Author: Niklas Schneider
-        Version: 1.0
+        Version: 1.0.0
         Requires: PowerShell 7.0+, CredentialManager module, Write-AppLogging function
     
         This is a public function exported by the PSNetworkAdministrator module.

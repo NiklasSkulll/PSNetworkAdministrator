@@ -9,13 +9,20 @@
     RootModule = 'PSNetworkAdministrator.psm1'
 
     # version number of the module
-    ModuleVersion = '1.0'
-
-    # supported PSEditions
-    # CompatiblePSEditions = @()
+    ModuleVersion = '1.0.0'
 
     # ID of the module
     # GUID = ''
+
+    # supported PSEditions
+    PowerShellVersion = '7.0'
+    CompatiblePSEditions = @('Core', 'Desktop')
+
+    # required PSModules
+    RequiredModules = @(
+        @{ ModuleName = 'CredentialManager'; ModuleVersion = '2.0' },
+        @{ ModuleName = 'ActiveDirectory'; ModuleVersion = '1.0' }
+    )
 
     # Author of the module
     Author = 'Niklas Schneider'
@@ -25,6 +32,20 @@
 
     # Description of the module functions
     Description = 'PowerShell Network Administration Tool'
+
+    # PSData of the module
+    PrivateData = @{
+        PSData = @{
+            Tags = @('NetworkAdministration', 'ActiveDirectory', 'RemoteManagement', 'Windows', 'Administration', 'Admin')
+            LicenseUri = 'https://github.com/NiklasSkulll/PSNetworkAdministrator/blob/main/LICENSE'
+            ProjectUri = 'https://github.com/NiklasSkulll/PSNetworkAdministrator'
+            # IconUri = ''
+            ReleaseNotes = 'Initial release - Active Directory computer management and availability checking'
+            # Prerelease = 'alpha'
+            # RequireLicenseAcceptance = $false
+            # ExternalModuleDependencies = @()
+        }
+    }
 
     # functions to export from this module
     FunctionsToExport = @(

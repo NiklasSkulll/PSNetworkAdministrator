@@ -43,7 +43,7 @@ function Test-TCPPortAvailability {
     
     .NOTES
         Author: Niklas Schneider
-        Version: 1.0
+        Version: 1.0.0
         Requires: PowerShell 7.0+
         
         This is a private function used internally by the PSNetworkAdministrator module.
