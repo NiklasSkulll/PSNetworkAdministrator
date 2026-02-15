@@ -76,7 +76,7 @@ function Get-DomainComputers {
         $AllADComputer = Get-ADComputer -Server $DomainName -Credential $Credential -Filter * -Properties OperatingSystem, OperatingSystemVersion, DNSHostName, Enabled, MemberOf
         $AllADComputer = $AllADComputer | ForEach-Object -Parallel {
             [PSCustomObject]@{
-                Name = $_.Name
+                ComputerName = $_.Name
                 DNSHostName = $_.DNSHostName
                 IPv4Address = if ($_.DNSHostName) {
                     try {

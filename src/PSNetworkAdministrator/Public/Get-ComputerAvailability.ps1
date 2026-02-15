@@ -6,6 +6,9 @@ function Get-ComputerAvailability {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
+        [string]$ComputerName,
+
+        [Parameter(Mandatory)]
         [string]$DNSHostName,
     
         [string]$IPv4Address,
@@ -16,10 +19,11 @@ function Get-ComputerAvailability {
     # checks if $DNSHostName is empty/null/whitespace, fallback to $IPv4Address
     $ConnectionTarget = if (-not [string]::IsNullOrWhiteSpace($DNSHostName)) {$DNSHostName} else {$IPv4Address}
     if ([string]::IsNullOrWhiteSpace($ConnectionTarget)) {
+        Write-AppLogging -LoggingMessage "Empty DNSHostName or IPv4 address for '$ComputerName'." -LoggingLevel "Warning"
         return [PSCustomObject]@{
             ConnectionTarget = $ConnectionTarget
             Status = "Unknown"
-            Reason = "Empty DNSHostName or IPv4 address"
+            Reason = "Empty DNSHostName or IPv4 address for '$ComputerName'."
             IPv4Ping = $false
             PortCheck = $false
         }
