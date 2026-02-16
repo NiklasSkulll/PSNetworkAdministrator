@@ -52,6 +52,7 @@
         'Add-Domain',
         'Add-DomainCredentials',
         'Get-ComputerAvailability',
+        'Get-ComputerHardwareInfo',
         'Get-DomainComputers',
         'Get-DomainCredentials',
         'Initialize-Domain',
