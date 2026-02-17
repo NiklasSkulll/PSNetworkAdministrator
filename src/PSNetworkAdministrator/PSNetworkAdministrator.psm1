@@ -4,7 +4,7 @@
 # generated on: 02.02.2026
 # ------------------------------
 
-# dot-source all private, public and service functions
+# === dot-source all private, public and service functions ===
 try {
     Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
         . $_.FullName
@@ -20,21 +20,56 @@ catch {
     throw "Failed to dot-source all private, public and service functions: $($_.Exception.Message)"
 }
 
-# check module availability: CredentialManager, ActiveDirectory
+# === check module availability: CredentialManager, ActiveDirectory ===
 if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
-    throw "ActiveDirectory module not found. Install Modul: Install-Module -Name CredentialManager -Force -Scope CurrentUser"
+    throw "CredentialManager module not found. Install Modul: Install-Module -Name CredentialManager -Force -Scope CurrentUser"
 }
 if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
-    throw "ActiveDirectory module not found. Install RSAT tools: Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
+    Write-Warning "ActiveDirectory module not found. Install RSAT tools: Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
 }
 
-# import modules: CredentialManager, ActiveDirectory
+# === import modules: CredentialManager, ActiveDirectory ===
 try {
     Import-Module CredentialManager -ErrorAction Stop
     Import-Module ActiveDirectory -ErrorAction Stop
 }
 catch {
-    throw "Failed to import modules: $($_.Exception.Message)"
+    Write-Warning "Failed to import modules: $($_.Exception.Message)"
+}
+
+# === SQLite dependency ===
+
+# variables for DB + dependencies folders
+$script:DataRoot = Join-Path $PSScriptRoot 'Data'
+$script:DBFolder = Join-Path $script:DataRoot 'db'
+$script:DepsFolder = Join-Path $script:DataRoot 'deps'
+
+# check if folders exist and create them
+foreach ($DBPath in @($script:DBFolder, $script:DepsFolder)) {
+    if (-not (Test-Path -LiteralPath $DBPath)) {
+        New-Item -ItemType Directory -Path $DBPath -Force | Out-Null
+    }
+}
+
+# default DB file path
+$script:DBFilePath = Join-Path $script:DBFolder 'PSNetworkAdministrator.sqlite'
+
+# load SQLite provider DLL
+$script:SQLiteAvailable = $false
+$SQLiteDll = Join-Path $script:DepsFolder 'Microsoft.Data.Sqlite.dll'
+
+if (Test-Path -LiteralPath $SQLiteDll) {
+    try {
+        Add-Type -Path $SQLiteDll -ErrorAction Stop
+        $script:SQLiteAvailable = $true
+    }
+    catch {
+        $script:SQLiteAvailable = $false
+        Write-Warning "Failed to load SQLite DLL from '$SQLiteDll': $($_.Exception.Message)"
+    }
+}
+else {
+    Write-Warning "SQLite DLL not found at '$SQLiteDll'. Put Microsoft.Data.Sqlite.dll (and any dependency DLLs) into Data\deps."
 }
 
 # load config and initialize the path and max logging size for logs
