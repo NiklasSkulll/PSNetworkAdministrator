@@ -48,12 +48,12 @@ function Initialize-Configuration {
         [string]$ConfigPath = (Join-Path $PSScriptRoot "..\..\..\config\config.psd1")
     )
 
-    # check if config file isn't available and throw error
+    # === check if config file isn't available ===
     if (-not (Test-Path $ConfigPath)){
         throw "Missing config file at: $ConfigPath"
     }
 
-    # load config file data
+    # === load config file data ===
     try {
         $ConfigData = Import-PowerShellDataFile -Path $ConfigPath
 

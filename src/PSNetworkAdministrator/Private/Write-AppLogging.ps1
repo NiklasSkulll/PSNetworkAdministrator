@@ -75,29 +75,29 @@ function Write-AppLogging {
         [string]$LoggingPath = $script:LoggingPath
     )
     
-    # get current date and time for file naming and log entries
+    # === get current date and time ===
     $LoggingTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $CurrentDate = $LoggingTimestamp.Split(' ')[0]
     $CurrentTime = $LoggingTimestamp.Split(' ')[1]
 
-    # extract directory, file name (with and without extension)
+    # === extract directory, file name (with/without extension) ===
     $LoggingDirectory = Split-Path -Parent $LoggingPath
     $LogFileName = Split-Path -Leaf $LoggingPath
     $LogFileNameNoExt = [System.IO.Path]::GetFileNameWithoutExtension($LogFileName)
     $LogFileNameJustExt = [System.IO.Path]::GetExtension($LogFileName)
 
-    # create log directory, if it doesn't exist
+    # === create log directory, if it doesn't exist ===
     if ($LoggingDirectory -and -not (Test-Path $LoggingDirectory)) {
         New-Item -Path $LoggingDirectory -ItemType Directory -Force | Out-Null
     }
 
-    # determine the target log file
+    # === variable for target log file ===
     $TargetLoggingPath = $null
 
-    # check for existing log files
+    # === check for existing log files ===
     $ExistingLogFiles = Get-ChildItem -Path $LoggingDirectory -Filter "$LogFileNameNoExt*$LogFileNameJustExt" -ErrorAction SilentlyContinue
     
-    # look for a log file that hasn't exceeded the size limit
+    # === search log file that hasn't exceeded the size limit ===
     if ($ExistingLogFiles) {
         foreach ($LoggingFile in $ExistingLogFiles) {
             $FileSizeMB = [math]::Round($LoggingFile.length / 1MB, 2)
@@ -108,12 +108,12 @@ function Write-AppLogging {
         }
     }
 
-    # if no suitable file found, create a new dated one
+    # === create a new log file (if none is found) ===
     if (-not $TargetLoggingPath) {
         $TargetLoggingPath = Join-Path $LoggingDirectory "$LogFileNameNoExt.$CurrentDate$LogFileNameJustExt"
     }
 
-    # format and write log entry
+    # === format and write log entry ===
     $LoggingEntry = "[$CurrentDate][$CurrentTime][$LoggingLevel]: $LoggingMessage"
     try {
         Add-Content -Path $TargetLoggingPath -Value $LoggingEntry

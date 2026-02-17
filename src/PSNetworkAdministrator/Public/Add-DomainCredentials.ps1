@@ -59,7 +59,7 @@ function Add-DomainCredentials {
         [PSCredential]$Credential
     )
 
-    # store credential in Windows Credential Manager
+    # === store credential in Windows Credential Manager ===
     try {
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         New-StoredCredential -Target $UniqueIdentifier -UserName $Credential.UserName -Password $Credential.GetNetworkCredential().Password -Type Generic -Persist LocalMachine

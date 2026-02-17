@@ -53,13 +53,13 @@ function Remove-DomainCredentials {
         [string]$DomainName
     )
 
-    # remove the stored credential with the unique identifier
+    # === remove the stored credential with the unique identifier ===
     try {
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         $StoredCred = Get-StoredCredential -Target $UniqueIdentifier
 
         if ($null -eq $StoredCred) {
-            Write-AppLogging -LoggingMessage "No credentials found for domain: $DomainName" -LoggingLevel "Warning"
+            Write-AppLogging -LoggingMessage "Couldn't remove credentials. No credentials found for domain: $DomainName" -LoggingLevel "Warning"
             return [PSCustomObject]@{
                 Domain = $DomainName
                 Removed = $false

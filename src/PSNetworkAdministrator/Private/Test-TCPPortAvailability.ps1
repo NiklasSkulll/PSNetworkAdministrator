@@ -71,10 +71,10 @@ function Test-TCPPortAvailability {
         [int]$Port
     )
 
-    # define a timeout variable for the port check
+    # === define a timeout variable for the port check ===
     $TimeoutMs = 800
 
-    # check the port connection with a TCP client object and a in-progress connect operation
+    # === check the port connection with a TCP client object and a in-progress connect operation ===
     try {
         $TCPClient = [System.Net.Sockets.TcpClient]::new()
         $InProgressConnection = $TCPClient.BeginConnect($HostName, $Port, $null, $null)

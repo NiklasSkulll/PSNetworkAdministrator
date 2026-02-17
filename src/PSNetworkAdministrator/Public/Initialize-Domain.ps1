@@ -41,13 +41,14 @@ function Initialize-Domain {
     [CmdletBinding()]
     param()
 
-    # check if user is in a domain (true/false)
+    # === check if user is in a domain (true/false) ===
     $IsDomain = (Get-CimInstance Win32_ComputerSystem).PartOfDomain
 
-    # if user is in a domain, return domain name
+    # === return domain name ===
     if ($IsDomain) {
         $DomainName = (Get-CimInstance Win32_ComputerSystem).Domain
         Write-AppLogging -LoggingMessage "User is in domain: $DomainName" -LoggingLevel "Info"
+        
         Return [PSCustomObject]@{
             Domain = $DomainName
         }

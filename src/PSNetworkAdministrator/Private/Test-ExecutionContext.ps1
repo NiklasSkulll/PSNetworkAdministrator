@@ -38,11 +38,11 @@ function Test-ExecutionContext {
     [CmdletBinding()]
     param()
 
-    # get the current user status, "Administrator" role
+    # === get the current user status ===
     $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     $IsAdmin = $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-    # check if the PowerShell runs as "Administrator"
+    # === check if the PowerShell runs as "Administrator" ===
     if ($IsAdmin) {
         return [PSCustomObject]@{
             Status = "Passed"

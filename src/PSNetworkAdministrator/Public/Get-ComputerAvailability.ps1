@@ -100,8 +100,9 @@ function Get-ComputerAvailability {
         [string]$OperatingSystem
     )
 
-    # checks if $DNSHostName is empty/null/whitespace, fallback to $IPv4Address
+    # === checks if $DNSHostName is empty/null/whitespace, fallback to $IPv4Address ===
     $ConnectionTarget = if (-not [string]::IsNullOrWhiteSpace($DNSHostName)) {$DNSHostName} else {$IPv4Address}
+
     if ([string]::IsNullOrWhiteSpace($ConnectionTarget)) {
         Write-AppLogging -LoggingMessage "Empty DNSHostName or IPv4 address for '$ComputerName'." -LoggingLevel "Warning"
         return [PSCustomObject]@{
@@ -113,7 +114,7 @@ function Get-ComputerAvailability {
         }
     }
 
-    # ping the IPv4 address to check if the network is reachable
+    # === ping the IPv4 address to check if the network is reachable ===
     try {
         $PingResult = Test-Connection -TargetName $ConnectionTarget -Quiet -Count 1 -TimeoutSeconds 1 -ErrorAction Stop
     }
@@ -121,7 +122,7 @@ function Get-ComputerAvailability {
         $PingResult = $false
     }
 
-    # define ports based on OS, fallback to a list
+    # === define ports based on OS, fallback to a list ===
     $PortList = if ($OperatingSystem -match 'Linux|Ubuntu|Debian|Red Hat|CentOS|SUSE|macOS|OS X|Mac') {
         @(22)
     }
@@ -132,7 +133,7 @@ function Get-ComputerAvailability {
         @(5985, 445, 22, 3389)
     }
 
-    # check $PortList with Test-TCPPortAvailability to check if the computer is manageable
+    # === check $PortList with Test-TCPPortAvailability to check if the computer is manageable ===
     $PortCheck = $false
     $OpenPort = $null
     foreach ($Port in $PortList) {
@@ -143,8 +144,9 @@ function Get-ComputerAvailability {
         }
     }
 
-    # define the availability of the computer (online/offline)
+    # === define the availability of the computer ===
     $AvailabilityStatus = if ($PingResult -or $PortCheck) {"Online"} else {"Offline"}
+
     $Reason = if ($PingResult -and $PortCheck) {
         "Network is reachable and computer is manageable. ICMP reply and TCP port '$OpenPort' answered."
     }

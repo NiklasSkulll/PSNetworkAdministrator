@@ -52,7 +52,7 @@ function Get-DomainCredentials {
         [string]$DomainName
     )
 
-    # get the stored credential with the unique identifier
+    # === get the stored credential with the unique identifier ===
     try {
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         $StoredCred = Get-StoredCredential -Target $UniqueIdentifier

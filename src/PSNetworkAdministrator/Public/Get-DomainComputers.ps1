@@ -71,9 +71,12 @@ function Get-DomainComputers {
         [PSCredential]$Credential
     )
     
+    # === get all computers from domain and group them by OS ===
     try {
-        # get all computer objects from Domain with the properties: "OperatingSystem, OperatingSystemVersion, DNSHostName, Enabled, MemberOf and IPv4Address"
+        # get all computer objects from domain with some properties
         $AllADComputer = Get-ADComputer -Server $DomainName -Credential $Credential -Filter * -Properties OperatingSystem, OperatingSystemVersion, DNSHostName, Enabled, MemberOf
+        
+        # extend the properties with the IPv4 address
         $AllADComputer = $AllADComputer | ForEach-Object -Parallel {
             [PSCustomObject]@{
                 ComputerName = $_.Name
@@ -103,7 +106,7 @@ function Get-DomainComputers {
         $LinuxClients = $AllADComputer | Where-Object {$_.OperatingSystem -match 'Linux|Ubuntu|Debian|Red Hat|CentOS|SUSE' -and $_.OperatingSystem -notlike '*Server*'}
         $MacosClients = $AllADComputer | Where-Object {$_.OperatingSystem -match 'Mac|OS X|macOS' -and $_.OperatingSystem -notlike '*Server*'}
 
-        # collecting all unknown computer (unknown os and empty/whitespace "OperatingSystem-String")
+        # collecting all unknown computer (unknown os and empty/whitespace OperatingSystem)
         $OtherComputers = $AllADComputer | Where-Object {-not [string]::IsNullOrWhiteSpace($_.OperatingSystem) -and $_.OperatingSystem -notlike '*Windows*' -and $_.OperatingSystem -notmatch 'Linux|Ubuntu|Debian|Red Hat|CentOS|SUSE' -and $_.OperatingSystem -notmatch 'Mac|OS X|macOS'}
         $UnknownComputers = $AllADComputer | Where-Object {[string]::IsNullOrWhiteSpace($_.OperatingSystem)}
 

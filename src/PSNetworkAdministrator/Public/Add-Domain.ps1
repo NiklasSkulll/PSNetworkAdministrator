@@ -49,15 +49,15 @@ function Add-Domain {
         [string]$DomainName
     )
 
-    # trims input
+    # === trims input ===
     $DomainName = $DomainName.Trim()
 
-    # checks if input is empty/null/whitespace
+    # === checks if input is empty/null/whitespace ===
     if ([string]::IsNullOrWhiteSpace($DomainName)) {
         throw "Empty Input. You need to provide a domain name."
     }
 
-    # return the domain
+    # === return the domain ===
     Write-AppLogging -LoggingMessage "Domain manually added: $DomainName" -LoggingLevel "Info"
     return [PSCustomObject]@{
             Domain = $DomainName
