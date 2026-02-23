@@ -87,9 +87,7 @@ function Write-AppLogging {
     $LogFileNameJustExt = [System.IO.Path]::GetExtension($LogFileName)
 
     # === create log directory, if it doesn't exist ===
-    if ($LoggingDirectory -and -not (Test-Path $LoggingDirectory)) {
-        New-Item -Path $LoggingDirectory -ItemType Directory -Force | Out-Null
-    }
+    Initialize-FilePath -FilePath $LoggingPath
 
     # === variable for target log file ===
     $TargetLoggingPath = $null
