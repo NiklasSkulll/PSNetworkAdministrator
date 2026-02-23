@@ -73,6 +73,11 @@ function Get-DomainComputers {
     
     # === get all computers from domain and group them by OS ===
     try {
+        # check parameters
+        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
+        $CredentialIsNotEmpty = Test-FunctionVariables -Param $Credential
+        if (-not $DomainNameIsNotEmpty -or -not $CredentialIsNotEmpty) {throw "Domain name/Credential is null/empty."}
+
         # get all computer objects from domain with some properties
         $AllADComputer = Get-ADComputer -Server $DomainName -Credential $Credential -Filter * -Properties OperatingSystem, OperatingSystemVersion, DNSHostName, Enabled, MemberOf
         

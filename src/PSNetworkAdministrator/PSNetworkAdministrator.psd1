@@ -49,6 +49,7 @@
 
     # functions to export from this module
     FunctionsToExport = @(
+        'Add-DataToSQLite',
         'Add-Domain',
         'Add-DomainCredentials',
         'Get-ComputerAvailability',
@@ -56,6 +57,7 @@
         'Get-DomainComputers',
         'Get-DomainCredentials',
         'Initialize-Domain',
+        'Remove-DataFromSQLite',
         'Remove-DomainCredentials'
     )
 }

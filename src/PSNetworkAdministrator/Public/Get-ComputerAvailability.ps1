@@ -101,10 +101,20 @@ function Get-ComputerAvailability {
     )
 
     # === checks if $DNSHostName is empty/null/whitespace, fallback to $IPv4Address ===
-    $ConnectionTarget = if (-not [string]::IsNullOrWhiteSpace($DNSHostName)) {$DNSHostName} else {$IPv4Address}
+    $ComputerNameIsNotEmpty = Test-FunctionVariables -Param $ComputerName
+    $DNSHostNameIsNotEmpty = Test-FunctionVariables -Param $DNSHostName
+    $IPv4AddressIsNotEmpty = Test-FunctionVariables -Param $IPv4Address
 
-    if ([string]::IsNullOrWhiteSpace($ConnectionTarget)) {
-        Write-AppLogging -LoggingMessage "Empty DNSHostName or IPv4 address for '$ComputerName'." -LoggingLevel "Warning"
+    $ConnectionTarget = if ($DNSHostNameIsNotEmpty) {$DNSHostName} else {$IPv4Address}
+
+    if (-not $IPv4AddressIsNotEmpty) {
+        if ($ComputerNameIsNotEmpty) {
+            Write-AppLogging -LoggingMessage "Empty DNSHostName or IPv4 address for '$ComputerName'." -LoggingLevel "Warning"
+        }
+        else {
+            Write-AppLogging -LoggingMessage "Empty DNSHostName or IPv4 address for a domain." -LoggingLevel "Warning"
+        }
+        
         return [PSCustomObject]@{
             ConnectionTarget = $ConnectionTarget
             Status = "Unknown"

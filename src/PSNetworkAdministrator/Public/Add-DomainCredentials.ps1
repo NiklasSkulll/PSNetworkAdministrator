@@ -61,6 +61,10 @@ function Add-DomainCredentials {
 
     # === store credential in Windows Credential Manager ===
     try {
+        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
+        $CredentialIsNotEmpty = Test-FunctionVariables -Param $Credential
+        if (-not $DomainNameIsNotEmpty -or -not $CredentialIsNotEmpty) {throw "Domain name/Credential is null/empty."}
+
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         New-StoredCredential -Target $UniqueIdentifier -UserName $Credential.UserName -Password $Credential.GetNetworkCredential().Password -Type Generic -Persist LocalMachine
 

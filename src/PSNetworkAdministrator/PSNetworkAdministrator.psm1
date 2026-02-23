@@ -72,7 +72,7 @@ else {
     Write-Warning "SQLite DLL not found at '$SQLiteDll'. Put Microsoft.Data.Sqlite.dll (and any dependency DLLs) into Data\deps."
 }
 
-# load config and initialize the path and max logging size for logs
+# === load config and initialize path and max logging size for logs ===
 try {
     $script:ModuleConfig = Initialize-Configuration
     $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath

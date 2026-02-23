@@ -48,14 +48,12 @@ function Add-Domain {
         [Parameter(Mandatory)]
         [string]$DomainName
     )
+    # === checks if input is empty/null/whitespace ===
+    $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
+    if (-not $DomainNameIsNotEmpty) {throw "Domain name is null/empty."}
 
     # === trims input ===
     $DomainName = $DomainName.Trim()
-
-    # === checks if input is empty/null/whitespace ===
-    if ([string]::IsNullOrWhiteSpace($DomainName)) {
-        throw "Empty Input. You need to provide a domain name."
-    }
 
     # === return the domain ===
     Write-AppLogging -LoggingMessage "Domain manually added: $DomainName" -LoggingLevel "Info"

@@ -55,6 +55,9 @@ function Remove-DomainCredentials {
 
     # === remove the stored credential with the unique identifier ===
     try {
+        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
+        if (-not $DomainNameIsNotEmpty) {throw "Domain name is null/empty."}
+        
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         $StoredCred = Get-StoredCredential -Target $UniqueIdentifier
 

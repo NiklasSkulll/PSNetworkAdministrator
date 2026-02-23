@@ -94,8 +94,12 @@ function Get-ComputerHardwareInfo {
         [Parameter(Mandatory)]
         [PSCredential]$Credential,
 
-        [boolean]$IsServerTrue
+        [bool]$IsServerTrue
     )
+    # === check parameters ===
+    $DNSHostNameIsNotEmpty = Test-FunctionVariables -Param $DNSHostName
+    $CredentialIsNotEmpty = Test-FunctionVariables -Param $Credential
+    if (-not $DNSHostNameIsNotEmpty -or -not $CredentialIsNotEmpty) {throw "DNSHostName/Credential is null/empty."}
 
     # === variables ===
     $ComputerCPUInfo = $null
