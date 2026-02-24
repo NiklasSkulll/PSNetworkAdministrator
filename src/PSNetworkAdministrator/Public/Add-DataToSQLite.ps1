@@ -15,15 +15,19 @@ function Add-DataToSQLite {
         [string]$DataTableName
     )
 
-    # === initial checks (DLL loaded, input is null) ===
+    # === check if DLL loaded ===
     if (-not $script:SQLiteAvailable) {
         Write-AppLogging -LoggingMessage "Failed to load SQLite DLL during the PSNetworkAdministrator module import." -LoggingLevel "Error"
         throw "Failed to load SQLite DLL during the PSNetworkAdministrator module import."
     }
-    $DataObjectIsNotEmpty = Test-FunctionVariables -Param $DataObject
-    $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-    $DataTableNameIsNotEmpty = Test-FunctionVariables -Param $DataTableName
-    if (-not $DataObjectIsNotEmpty -or -not $DomainNameIsNotEmpty -or -not $DataTableNameIsNotEmpty) {throw "Data object or domain/table name is null/empty."}
+
+    # === initialize data schema ===
+    try {
+        $InitializedDataSchema = Initialize-SQLiteSchema -DomainName $DomainName -DataTableName $DataTableName -DataObject $DataObject
+    }
+    catch {
+        throw "Failed to initialize schema: $($_.Exception.Message)"
+    }
     
     # === SQLite file path ===
     $DataFilePath = $script:DBFilePath
@@ -31,30 +35,20 @@ function Add-DataToSQLite {
 
     # === create table and write data ===
     try {
-        # create the SQLite table if it doesn't exists and get table properties
-        $DataTableProperties = Initialize-SQLiteTable -DataTableName $DataTableName -DataFilePath $DataFilePath
-
-        # order the values of the $DataObject
-        $DataValuesInOrder = Write-SQLiteSchemaValuesInOrder -DataObject $DataObject -AllColumnNamesWithoutID $DataTableProperties.AllColumnNamesWithoutID -DomainName $DomainName
-
-        # create a list of placeholders for the values
-        $DataValuesInOrder = @($DataValuesInOrder)
-        $CountDataValues = $DataValuesInOrder.Count
-        if ($CountDataValues -eq 0) {throw "'$DataTableName' has no insertable columns. Columns might contain only the ID."}
-        $DataValuesPlaceholder = 0..($CountDataValues-1) | ForEach-Object { "@DVP$_" }
-        $DataValuePlaceholderList = $DataValuesPlaceholder -join ", "
+        # create the SQLite table if it doesn't exists
+        Initialize-SQLiteTable -DomainName $DomainName -DataTableName $DataTableName -DataFilePath $DataFilePath -DataObject $DataObject
 
         # open SQLite connection
         $SQLiteConnection = [Microsoft.Data.Sqlite.SqliteConnection]::new("Data Source=$DataFilePath")
         $SQLiteConnection.Open()
 
         # write data into the table
-        $SQLiteCommandText = "INSERT INTO $($DataTableProperties.QuotedDataTableName) ($($DataTableProperties.AllColumnNamesWithoutIDList)) VALUES ($DataValuePlaceholderList);"
+        $SQLiteCommandText = "INSERT INTO $($InitializedDataSchema.QuotedDataTableName) ($($InitializedDataSchema.AllColumnNamesWithoutIDList)) VALUES ($($InitializedDataSchema.DataValuePlaceholderList));"
         $SQLiteCommand = $SQLiteConnection.CreateCommand()
         $SQLiteCommand.CommandText = $SQLiteCommandText
         $i = 0
-        foreach ($DataValue in $DataValuesInOrder) {
-            $SQLParamName = "@DVP$i"
+        foreach ($DataValue in $($InitializedDataSchema.DataValuesInOrder)) {
+            $SQLParamName = "$($InitializedDataSchema.SQLParamName)$i"
 
             $SQLParam = $SQLiteCommand.CreateParameter()
             $SQLParam.ParameterName = $SQLParamName
