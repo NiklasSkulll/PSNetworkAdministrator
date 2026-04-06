@@ -51,7 +51,7 @@ function Write-AppLogging {
         This function is intended for internal use only (Private function).
 
         Log File Rotation:
-        - Maximum log file size is defined by $script:MaxLogSizeMB (loaded from module configuration)
+        - Maximum log file size is defined by $script:ModuleConfig.Logging.MaxLoggingSizeMB (loaded from module configuration)
         - When a log file exceeds the size limit, a new file is created with date suffix
         - File naming pattern: basename.yyyy-MM-dd.extension (e.g. PSNetAdmin.2026-02-14.log)
         - Function checks all existing log files and uses the first one under the size limit
@@ -61,7 +61,7 @@ function Write-AppLogging {
 
         Dependencies:
         - Requires $script:LoggingPath to be initialized (set in PSNetworkAdministrator.psm1)
-        - Requires $script:MaxLogSizeMB to be initialized (set in PSNetworkAdministrator.psm1)
+        - Requires $script:ModuleConfig to be initialized (set in PSNetworkAdministrator.psm1)
         - These variables are populated from Initialize-Configuration during module load
     #>
 
@@ -72,7 +72,10 @@ function Write-AppLogging {
         [ValidateSet('Info', 'Warning', 'Error')]
         [string]$LoggingLevel = 'Info',
         
-        [string]$LoggingPath = $script:LoggingPath
+        [string]$LoggingPath = $script:LoggingPath,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
     
     # === get current date and time ===
@@ -87,7 +90,7 @@ function Write-AppLogging {
     $LogFileNameJustExt = [System.IO.Path]::GetExtension($LogFileName)
 
     # === create log directory, if it doesn't exist ===
-    Initialize-FilePath -FilePath $LoggingPath
+    Initialize-FilePath -FilePath $LoggingPath -Language $Language
 
     # === variable for target log file ===
     $TargetLoggingPath = $null
@@ -99,7 +102,7 @@ function Write-AppLogging {
     if ($ExistingLogFiles) {
         foreach ($LoggingFile in $ExistingLogFiles) {
             $FileSizeMB = [math]::Round($LoggingFile.length / 1MB, 2)
-            if ($FileSizeMB -lt $script:MaxLogSizeMB) {
+            if ($FileSizeMB -lt $script:ModuleConfig.Logging.MaxLoggingSizeMB) {
                 $TargetLoggingPath = $LoggingFile.FullName
                 break
             }
@@ -117,6 +120,7 @@ function Write-AppLogging {
         Add-Content -Path $TargetLoggingPath -Value $LoggingEntry
     }
     catch {
-        throw "Failed to write log into file in '$TargetLoggingPath': $($_.Exception.Message)"
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000003' -ExceptionMessage "$($_.Exception.Message)" -VariableName '$TargetLoggingPath' -VariableValue $TargetLoggingPath -Language $Language
+        throw $ErrorMessage
     }
 }

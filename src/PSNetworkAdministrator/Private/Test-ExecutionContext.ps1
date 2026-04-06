@@ -45,11 +45,12 @@ function Test-ExecutionContext {
     # === check if the PowerShell runs as "Administrator" ===
     if ($IsAdmin) {
         return [PSCustomObject]@{
-            Status = "Passed"
-            Message = "Running as Administrator."
+            Passed = $true
+            Message = "|PowerShell|: Running as Administrator."
         }
     }
     else {
-        throw "Running as non-Administrator. Tool needs to run as Administrator."
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'RMx0000001' -VariableValue 'PowerShell'
+        throw $ErrorMessage
     }
 }

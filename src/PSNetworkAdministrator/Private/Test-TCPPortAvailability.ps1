@@ -64,15 +64,38 @@ function Test-TCPPortAvailability {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$HostName,
+        [string]$DomainName,
+
+        [Parameter(Mandatory)]
+        [string]$ComputerName,
 
         [Parameter(Mandatory)]
         [ValidateRange(1,65535)]
-        [int]$Port
+        [int]$Port,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
+    # === check function variables ===
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    $ComputerNameCheck = Test-FunctionVariables -Param $ComputerName -ParamName '$ComputerName' -Language $Language
+
+    if (-not ($DomainNameCheck.Success) -or -not ($ComputerNameCheck.Success)) {
+        $ErrorMessages = @()
+        if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
+        if (-not ($ComputerNameCheck.Success)) {$ErrorMessages += $ComputerNameCheck.Message}
+        
+        $ErrorMessage = $ErrorMessages -join ' || '
+
+        throw $ErrorMessage
+    }
+
+    # === define HostName variable for the connection ===
+    $HostName = "$ComputerName.$DomainName"
+
     # === define a timeout variable for the port check ===
-    $TimeoutMs = 800
+    $TimeoutMs = $script:ModuleConfig.Network.DefaultTimeout
 
     # === check the port connection with a TCP client object and a in-progress connect operation ===
     try {
@@ -81,17 +104,19 @@ function Test-TCPPortAvailability {
 
         # return $false by connection timeout
         if (-not $InProgressConnection.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) {
-            $TCPClient.EndConnect($InProgressConnection)
-            $TCPClient.Close()
             return $false
         }
 
-        # connection was successfull, close connection and return $true
-        $TCPClient.EndConnect($InProgressConnection)
-        $TCPClient.Close()
         return $true
     }
     catch {
         return $false
+    }
+    finally {
+        # connection was successfull, close connection and return $true
+        if ($TCPClient -or $InProgressConnection) {
+            $TCPClient.EndConnect($InProgressConnection)
+            $TCPClient.Close()
+        }
     }
 }

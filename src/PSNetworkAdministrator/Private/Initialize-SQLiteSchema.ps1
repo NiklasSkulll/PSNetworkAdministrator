@@ -12,51 +12,66 @@ function Initialize-SQLiteSchema {
         [string]$DataTableName,
 
         [Parameter(Mandatory)]
-        [pscustomobject]$DataObject
+        [pscustomobject]$DataObject,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
-    # === check function parameter ===
-    $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-    $DataTableNameIsNotEmpty = Test-FunctionVariables -Param $DataTableName
-    $DataObjectIsNotEmpty = Test-FunctionVariables -Param $DataObject
-    if (-not $DomainNameIsNotEmpty -or -not $DataTableNameIsNotEmpty -or -not $DataObjectIsNotEmpty) {throw "Data object or domain/table name is null/empty."}
+    # ===== check function parameter =====
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    $DataTableNameCheck = Test-FunctionVariables -Param $DataTableName -ParamName '$DataTableName' -Language $Language
+    $DataObjectCheck = Test-FunctionVariables -Param $DataObject -ParamName '$DataObject' -Language $Language
+    
+    if (-not ($DomainNameCheck.Success) -or -not ($DataTableNameCheck.Success) -or -not ($DataObjectCheck.Success)) {
+        $ErrorMessages = @()
+        if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
+        if (-not ($DataTableNameCheck.Success)) {$ErrorMessages += $DataTableNameCheck.Message}
+        if (-not ($DataObjectCheck.Success)) {$ErrorMessages += $DataObjectCheck.Message}
+        
+        $ErrorMessage = $ErrorMessages -join ' || '
 
-    # === check table and get schema ===
+        throw $ErrorMessage
+    }
+
+    # ===== check table and get schema =====
     try {
-        $DataSchemaFull = Get-SQLiteSchemaDefinition -DataTableName $DataTableName
+        $DataSchemaFull = Get-SQLiteSchemaDefinition -DataTableName $DataTableName -Language $Language
         $DataSchema = $DataSchemaFull.DataSchema
         $DataUniqueIndex = $DataSchemaFull.DataUniqueIndex
     }
     catch {
-        throw "Failed to get table schema: $($_.Exception.Message)"
+        throw "$($_.Exception.Message)"
     }
 
-    # === check data schema content ===
-    $DataSchemaFullIsNotEmpty = Test-FunctionVariables -Param $DataSchemaFull
-    if (-not $DataSchemaFullIsNotEmpty) {throw "Data schema is null/empty."}
+    # ===== check data schema content =====
+    $DataSchemaFullCheck = Test-FunctionVariables -Param $DataSchemaFull -ParamName '$DataSchemaFull' -Language $Language
+    if (-not ($DataSchemaFullCheck.Success)) {throw "$($DataSchemaFullCheck.Message)"}
 
     try {
         # check naming pattern of $DataSchema
-        $DataSchemaValidated = Test-SQLiteSchema -DataSchema $DataSchema -DataUniqueIndex $DataUniqueIndex
+        $DataSchemaValidated = Test-SQLiteSchema -DataSchema $DataSchema -DataUniqueIndex $DataUniqueIndex -Language $Language
 
         # store all column names with and without 'ID'
         $AllColumnNames = $DataSchemaValidated.Columns | ForEach-Object {$_.Name}
-        $AllColumnNamesWithoutID = $AllColumnNames | Where-Object {$_ -ne 'Id'}
+        $AllColumnNamesWithoutID = $AllColumnNames | Where-Object {$_ -ne 'ID'}
 
         # Build a list from $DataSchemaValidated.Columns
         $DataTableColumnParts = foreach ($DataColumn in $DataSchemaValidated.Columns) {
             $ColumnName = '"' + $DataColumn.Name + '"'
             $ColumnDefinition  = "$ColumnName $($DataColumn.Type)"
 
-            if ($DataColumn.ContainsKey('Constraints') -and -not [string]::IsNullOrWhiteSpace($DataColumn.Constraints)) {
-                $ColumnDefinition += " $($DataColumn.Constraints)"
-            }
+            if ($DataColumn.ContainsKey('Constraints') -and -not [string]::IsNullOrWhiteSpace($DataColumn.Constraints)) {$ColumnDefinition += " $($DataColumn.Constraints)"}
 
             $ColumnDefinition
         }
 
         # Build a list from $DataUniqueIndex with quotes
-        if (-not $DataUniqueIndex) {throw "Schema didn't provided a unique identifier (unique index)."}
+        if (-not $DataUniqueIndex) {
+            $ErrorMessage = if ($Language -eq "de") {"Tabellenschema hat keine eindeutigen Index bereitgestellt."} else {"Schema didn't provided a unique identifier (unique index)."}
+            throw $ErrorMessage
+        }
+
         $DataUniqueIndexParts = foreach ($DataIndex in $DataUniqueIndex.IndexNames) {
             $DataIndexName = '"' + $DataIndex.Name + '"'
             $DataIndexName
@@ -71,12 +86,17 @@ function Initialize-SQLiteSchema {
         $QuotedUX = '"' + $DataUniqueIndex.UX + '"'
 
         # order the values of the $DataObject
-        $DataValuesInOrder = Write-SQLiteSchemaValuesInOrder -DataObject $DataObject -AllColumnNamesWithoutID $AllColumnNamesWithoutID -DomainName $DomainName
+        $DataValuesInOrder = Write-SQLiteSchemaValuesInOrder -DataObject $DataObject -AllColumnNamesWithoutID $AllColumnNamesWithoutID -DomainName $DomainName -Language $Language
 
         # create a list of placeholders for the values
         $DataValuesInOrder = @($DataValuesInOrder)
         $CountDataValues = $DataValuesInOrder.Count
-        if ($CountDataValues -eq 0) {throw "'$DataTableName' has no insertable columns. Columns might contain only the ID."}
+
+        if ($CountDataValues -eq 0) {
+            $ErrorMessage = if ($Language -eq "de") {"'$DataTableName' hat keine einsetzbaren Spalten. Spalten könnten nur ID enthalten."} else {"'$DataTableName' has no insertable columns. Columns might contain only the ID."}
+            throw $ErrorMessage
+        }
+
         $SQLParamName = "@DVP"
         $DataValuesPlaceholder = 0..($CountDataValues-1) | ForEach-Object { "$SQLParamName$_" }
         $DataValuePlaceholderList = $DataValuesPlaceholder -join ", "
@@ -98,6 +118,7 @@ function Initialize-SQLiteSchema {
         }
     }
     catch {
-        throw "Failed to initialize data schema: $($_.Exception.Message)"
+        $ErrorMessage = if ($Language -eq "de") {"Tabellenschema konnte nicht initialisiert werden:"} else {"Failed to initialize table schema:"}
+        throw "$ErrorMessage $($_.Exception.Message)"
     }
 }

@@ -8,14 +8,19 @@
 
     Logging = @{
         Enabled = $true
-        LoggingLevel = 'Info'
         LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
         MaxLoggingSizeMB = 10
     }
 
     Network = @{
-        DefaultTimeout = 5000
+        DefaultTimeout = 800
         MaxRetries = 3
+    }
+
+    AddIns = @{
+        AddInCount = '1'
+        AddInNames = 'RDP'
+        AddInPaths = '...'
     }
 
     UI = @{

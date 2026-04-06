@@ -35,6 +35,12 @@ function Initialize-SQLiteTable {
         $SQLiteConnection = [Microsoft.Data.Sqlite.SqliteConnection]::new("Data Source=$DataFilePath")
         $SQLiteConnection.Open()
 
+        # enable foreign key enforcement
+        $PragmaCommand = $SQLiteConnection.CreateCommand()
+        $PragmaCommand.CommandText = "PRAGMA foreign_keys = ON;"
+        $PragmaCommand.ExecuteNonQuery() | Out-Null
+        $PragmaCommand.Dispose()
+
         # create table if it don't exists
         $SQLiteCommandText = "CREATE TABLE IF NOT EXISTS $($InitializedDataSchema.QuotedDataTableName) ($($InitializedDataSchema.DataTableColumnList));"
         $SQLiteCommand = $SQLiteConnection.CreateCommand()

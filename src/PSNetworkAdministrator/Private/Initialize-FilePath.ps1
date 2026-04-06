@@ -6,21 +6,29 @@ function Initialize-FilePath {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$FilePath
+        [string]$FilePath,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
-    # === get file directory ===
-    $FilePathIsNotEmpty = Test-FunctionVariables -Param $FilePath
-    if ($FilePathIsNotEmpty) {$FileDirectory = Split-Path -Path $FilePath -Parent} else {throw "File is empty/null/whitespace."}
+    # ===== get file directory =====
+    $FilePathCheck = Test-FunctionVariables -Param $FilePath -ParamName '$FilePath' -Language $Language
 
-    # === check database folder, creates it ===
-    $FileDirectoryIsNotEmpty = Test-FunctionVariables -Param $DataTableName
-    if ($FileDirectoryIsNotEmpty) {
-        if (-not (Test-Path -LiteralPath $FileDirectory)) {
-            New-Item -ItemType Directory -Path $FileDirectory -Force | Out-Null
-        }
+    if ($FilePathCheck.Success) {
+        $FileDirectory = Split-Path -Path $FilePath -Parent
     }
     else {
-        throw "File directory is empty/null/whitespace."
+        throw "$($FilePathCheck.Message)"
+    }
+
+    # ===== check database folder, creates it =====
+    $FileDirectoryCheck = Test-FunctionVariables -Param $FileDirectory -ParamName '$FileDirectory' -Language $Language
+
+    if ($FileDirectoryCheck.Success) {
+        if (-not (Test-Path -LiteralPath $FileDirectory)) {New-Item -ItemType Directory -Path $FileDirectory -Force | Out-Null}
+    }
+    else {
+        throw "$($FileDirectoryCheck.Message)"
     }
 }

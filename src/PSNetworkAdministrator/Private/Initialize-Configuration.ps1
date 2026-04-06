@@ -7,10 +7,6 @@ function Initialize-Configuration {
         The Initialize-Configuration function loads the PSNetworkAdministrator configuration from a PowerShell data file (.psd1).
         It validates the configuration file exists, imports it and returns a structured PSCustomObject with all configuration settings
         including application metadata, logging settings, network parameters, and UI preferences.
-
-    .PARAMETER ConfigPath
-        The path to the configuration file. Defaults to the config.psd1 file in the config directory.
-        If not specified, automatically resolves to '..\..\..\config\config.psd1' relative to the script location.
     
     .EXAMPLE
         Initialize-Configuration
@@ -44,31 +40,52 @@ function Initialize-Configuration {
     #>
 
     [CmdletBinding()]
-    param(
-        [string]$ConfigPath = (Join-Path $PSScriptRoot "..\..\..\config\config.psd1")
-    )
+    param()
 
-    # === check if config file isn't available ===
-    if (-not (Test-Path $ConfigPath)){
-        throw "Missing config file at: $ConfigPath"
+    # ===== create the user config variable =====
+    $DefaultConfigPath = Join-Path $PSScriptRoot "..\..\..\config\DEFAULTconfig.psd1"
+    $UserConfigPath = Join-Path $PSScriptRoot "..\..\..\config\config.psd1"
+
+    # ===== check if config file is available =====
+    if (-not (Test-Path $UserConfigPath)) {
+        if (Test-Path $DefaultConfigPath) {
+            Copy-Item -Path $DefaultConfigPath -Destination $UserConfigPath
+        }
+        else {
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000001' -VariableName '$DefaultConfigPath' -VariableValue $DefaultConfigPath
+            throw $ErrorMessage
+        }
+    }
+    elseif ([string]::IsNullOrWhiteSpace((Get-Content $UserConfigPath -Raw))) {
+        if (Test-Path $DefaultConfigPath) {
+            Copy-Item -Path $DefaultConfigPath -Destination $UserConfigPath -Force
+        }
+        else {
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000001' -VariableName '$DefaultConfigPath' -VariableValue $DefaultConfigPath
+            throw $ErrorMessage
+        }  
     }
 
-    # === load config file data ===
+    # ===== load config file data =====
     try {
-        $ConfigData = Import-PowerShellDataFile -Path $ConfigPath
+        $ConfigData = Import-PowerShellDataFile -Path $UserConfigPath
 
         return [PSCustomObject]@{
             AppName = $ConfigData.AppName
             Version = $ConfigData.Version
             Logging = [PSCustomObject]@{
-                Enabled = $ConfigData.logging.Enabled
-                LoggingLevel = $ConfigData.logging.LoggingLevel
-                LoggingPath = $ConfigData.logging.LoggingPath
-                MaxLoggingSizeMB = $ConfigData.logging.MaxLoggingSizeMB
+                Enabled = $ConfigData.Logging.Enabled
+                LoggingPath = $ConfigData.Logging.LoggingPath
+                MaxLoggingSizeMB = $ConfigData.Logging.MaxLoggingSizeMB
             }
             Network = [PSCustomObject]@{
                 DefaultTimeout = $ConfigData.Network.DefaultTimeout
                 MaxRetries = $ConfigData.Network.MaxRetries
+            }
+            AddIns = [PSCustomObject]@{
+                AddInCount = $ConfigData.AddIns.AddInCount
+                AddInNames = $ConfigData.AddIns.AddInNames
+                AddInPaths = $ConfigData.AddIns.AddInPaths
             }
             UI = [PSCustomObject]@{
                 Theme = $ConfigData.UI.Theme
@@ -78,6 +95,7 @@ function Initialize-Configuration {
         }
     }
     catch {
-        throw "Failed to load the config file from '$ConfigPath': $($_.Exception.Message)"
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000002' -ExceptionMessage "$($_.Exception.Message)" -VariableName '$UserConfigPath' -VariableValue $UserConfigPath
+        throw $ErrorMessage
     }
 }

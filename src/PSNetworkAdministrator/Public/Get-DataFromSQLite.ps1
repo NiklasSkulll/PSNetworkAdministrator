@@ -49,6 +49,12 @@ function Get-DataFromSQLite {
         $SQLiteConnection = [Microsoft.Data.Sqlite.SqliteConnection]::new("Data Source=$DataFilePath")
         $SQLiteConnection.Open()
 
+        # enable foreign key enforcement
+        $PragmaCommand = $SQLiteConnection.CreateCommand()
+        $PragmaCommand.CommandText = "PRAGMA foreign_keys = ON;"
+        $PragmaCommand.ExecuteNonQuery() | Out-Null
+        $PragmaCommand.Dispose()
+
         # write data into the table
         $SQLiteCommandText = "SELECT * FROM $QuotedDataTableName WHERE $SQLWhereStatement;"
 

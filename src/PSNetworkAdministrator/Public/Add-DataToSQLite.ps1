@@ -42,6 +42,12 @@ function Add-DataToSQLite {
         $SQLiteConnection = [Microsoft.Data.Sqlite.SqliteConnection]::new("Data Source=$DataFilePath")
         $SQLiteConnection.Open()
 
+        # enable foreign key enforcement
+        $PragmaCommand = $SQLiteConnection.CreateCommand()
+        $PragmaCommand.CommandText = "PRAGMA foreign_keys = ON;"
+        $PragmaCommand.ExecuteNonQuery() | Out-Null
+        $PragmaCommand.Dispose()
+
         # write data into the table
         $SQLiteCommandText = "INSERT INTO $($InitializedDataSchema.QuotedDataTableName) ($($InitializedDataSchema.AllColumnNamesWithoutIDList)) VALUES ($($InitializedDataSchema.DataValuePlaceholderList));"
         $SQLiteCommand = $SQLiteConnection.CreateCommand()

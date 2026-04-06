@@ -76,9 +76,8 @@ else {
 try {
     $script:ModuleConfig = Initialize-Configuration
     $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath
-    $script:MaxLogSizeMB = $script:ModuleConfig.Logging.MaxLoggingSizeMB
 }
 catch {
     $script:LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
-    Write-Warning "Failed to load config, using default log path: $($script:LoggingPath)"
+    Write-Warning "$($_.Exception.Message)"
 }
