@@ -11,14 +11,30 @@ function Write-SQLiteSchemaValuesInOrder {
         [Parameter(Mandatory)]
         [string[]]$AllColumnNamesWithoutID,
 
-        [string]$DomainName
+        [string]$DomainName,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
     # === check input ===
-    $DataObjectIsNotEmpty = Test-FunctionVariables -Param $DataObject
-    $AllColumnNamesWithoutIDIsNotEmpty = Test-FunctionVariables -Param $AllColumnNamesWithoutID
-    if (-not $DataObjectIsNotEmpty -or -not $AllColumnNamesWithoutIDIsNotEmpty) {throw "Data object/AllColumnNamesWithoutID is null/empty."}
-    if ($AllColumnNamesWithoutID -contains 'DomainName' -and [string]::IsNullOrWhiteSpace($DomainName)) {throw "Domain name for this table is empty/null/whitespace."}
+    $DataObjectCheck = Test-FunctionVariables -Param $DataObject -ParamName '$DataObject' -Language $Language
+    $AllColumnNamesWithoutIDCheck = Test-FunctionVariables -Param $AllColumnNamesWithoutID -ParamName '$AllColumnNamesWithoutID' -Language $Language
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+
+    if (-not ($DataObjectCheck.Success) -or -not ($AllColumnNamesWithoutIDCheck.Success)) {
+        $ErrorMessages = @()
+        if (-not ($DataObjectCheck.Success)) {$ErrorMessages += $DataObjectCheck.Message}
+        if (-not ($AllColumnNamesWithoutIDCheck.Success)) {$ErrorMessages += $AllColumnNamesWithoutIDCheck.Message}
+        
+        $ErrorMessage = $ErrorMessages -join ' || '
+
+        throw $ErrorMessage
+    }
+    
+    if ($AllColumnNamesWithoutID -contains 'DomainName' -and -not ($DomainNameCheck.Success)) {
+        throw "$($DomainNameCheck.Message)"
+    }
 
     # === order the values of the $DataObject ===
     $DataValuesInOrder = foreach ($DataColumn in $AllColumnNamesWithoutID) {

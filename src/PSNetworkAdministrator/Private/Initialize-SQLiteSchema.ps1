@@ -49,8 +49,8 @@ function Initialize-SQLiteSchema {
     if (-not ($DataSchemaFullCheck.Success)) {throw "$($DataSchemaFullCheck.Message)"}
 
     try {
-        # check naming pattern of $DataSchema
-        $DataSchemaValidated = Test-SQLiteSchema -DataSchema $DataSchema -DataUniqueIndex $DataUniqueIndex -Language $Language
+        # validate $DataSchema
+        $DataSchemaValidated = Test-SQLiteSchema -DataSchema $DataSchema -DataUniqueIndex $DataUniqueIndex -DataTableName $DataTableName -Language $Language
 
         # store all column names with and without 'ID'
         $AllColumnNames = $DataSchemaValidated.Columns | ForEach-Object {$_.Name}
@@ -67,11 +67,6 @@ function Initialize-SQLiteSchema {
         }
 
         # Build a list from $DataUniqueIndex with quotes
-        if (-not $DataUniqueIndex) {
-            $ErrorMessage = if ($Language -eq "de") {"Tabellenschema hat keine eindeutigen Index bereitgestellt."} else {"Schema didn't provided a unique identifier (unique index)."}
-            throw $ErrorMessage
-        }
-
         $DataUniqueIndexParts = foreach ($DataIndex in $DataUniqueIndex.IndexNames) {
             $DataIndexName = '"' + $DataIndex.Name + '"'
             $DataIndexName
@@ -93,7 +88,7 @@ function Initialize-SQLiteSchema {
         $CountDataValues = $DataValuesInOrder.Count
 
         if ($CountDataValues -eq 0) {
-            $ErrorMessage = if ($Language -eq "de") {"'$DataTableName' hat keine einsetzbaren Spalten. Spalten könnten nur ID enthalten."} else {"'$DataTableName' has no insertable columns. Columns might contain only the ID."}
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000005' -VariableName '$DataValuesInOrder' -Language $Language
             throw $ErrorMessage
         }
 
@@ -118,7 +113,6 @@ function Initialize-SQLiteSchema {
         }
     }
     catch {
-        $ErrorMessage = if ($Language -eq "de") {"Tabellenschema konnte nicht initialisiert werden:"} else {"Failed to initialize table schema:"}
-        throw "$ErrorMessage $($_.Exception.Message)"
+        throw "$($_.Exception.Message)"
     }
 }

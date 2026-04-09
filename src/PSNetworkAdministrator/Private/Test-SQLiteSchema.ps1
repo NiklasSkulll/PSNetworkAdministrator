@@ -9,54 +9,125 @@ function Test-SQLiteSchema {
         [hashtable]$DataSchema,
 
         [Parameter(Mandatory)]
-        [hashtable]$DataUniqueIndex
+        [hashtable]$DataUniqueIndex,
+
+        [Parameter(Mandatory)]
+        [string]$DataTableName,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
     # === validate input ===
-    $DataSchemaIsNotEmpty = Test-FunctionVariables -Param $DataSchema
-    $DataUniqueIndexIsNotEmpty = Test-FunctionVariables -Param $DataUniqueIndex
-    if (-not $DataSchemaIsNotEmpty -or -not $DataUniqueIndexIsNotEmpty) {throw "Schema/Index is null/empty."}
+    $DataSchemaCheck = Test-FunctionVariables -Param $DataSchema -ParamName '$DataSchema' -Language $Language
+    $DataUniqueIndexCheck = Test-FunctionVariables -Param $DataUniqueIndex -ParamName '$DataUniqueIndex' -Language $Language
+    $DataTableNameCheck = Test-FunctionVariables -Param $DataTableName -ParamName '$DataTableName' -Language $Language
+
+    if (-not ($DataSchemaCheck.Success) -or -not ($DataUniqueIndexCheck.Success) -or -not ($DataTableNameCheck.Success)) {
+        $ErrorMessages = @()
+        if (-not ($DataSchemaCheck.Success)) {$ErrorMessages += $DataSchemaCheck.Message}
+        if (-not ($DataUniqueIndexCheck.Success)) {$ErrorMessages += $DataUniqueIndexCheck.Message}
+        if (-not ($DataTableNameCheck.Success)) {$ErrorMessages += $DataTableNameCheck.Message}
+        
+        $ErrorMessage = $ErrorMessages -join ' || '
+
+        throw $ErrorMessage
+    }
 
     # === define naming pattern (regex) and a list with allowed types ===
     $NamingPattern = '^[A-Za-z_][A-Za-z0-9_]*$'
     $AllowedTypes = @('INTEGER', 'TEXT', 'REAL', 'BLOB')
 
     # === check if Table, Columns, Name and Type are available ===
-    if (-not $DataSchema.ContainsKey('Table') -or -not $DataSchema.ContainsKey('Columns')) {throw "Schema missing Table/Columns."}
-    if (-not $DataSchema.Columns -or $DataSchema.Columns.Count -eq 0) {throw "Columns are empty."}
+    if (-not ($DataSchema.ContainsKey('Table')) -or -not ($DataSchema.ContainsKey('Columns'))) {
+        $ErrorMessages = @()
+        if (-not ($DataSchema.ContainsKey('Table'))) {
+            $ErrorMessageTables = Get-ErrorMessages -ErrorCode 'DBx0000001' -VariableName '$DataSchema' -VariableValue $DataTableName -Language $Language
+            $ErrorMessages += $ErrorMessageTables
+        }
+        if (-not ($DataSchema.ContainsKey('Columns'))) {
+            $ErrorMessageColumns = Get-ErrorMessages -ErrorCode 'DBx0000002' -VariableName '$DataSchema' -VariableValue $DataTableName -Language $Language
+            $ErrorMessages += $ErrorMessageColumns
+        }
+
+        $ErrorMessage = $ErrorMessages -join ' || '
+        
+        throw $ErrorMessage
+    }
+
+    if (-not $DataSchema.Columns -or $DataSchema.Columns.Count -eq 0) {
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000003' -VariableName '$DataSchema.Columns' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
+    }
+
     foreach ($DataColumn in $DataSchema.Columns) {
         if ([string]::IsNullOrWhiteSpace($DataColumn.Name) -or [string]::IsNullOrWhiteSpace($DataColumn.Type)) {
-            throw "Column missing Name/Type."
+            $ErrorMessages = @()
+            if ([string]::IsNullOrWhiteSpace($DataColumn.Name)) {
+                $ErrorMessageColName = Get-ErrorMessages -ErrorCode 'DBx0000004' -VariableName '$DataColumn.Name' -VariableValue $DataTableName -Language $Language
+                $ErrorMessages += $ErrorMessageColName
+            }
+            if ([string]::IsNullOrWhiteSpace($DataColumn.Type)) {
+                $ErrorMessageColType = Get-ErrorMessages -ErrorCode 'DBx0000005' -VariableName '$DataColumn.Type' -VariableValue $DataTableName -Language $Language
+                $ErrorMessages += $ErrorMessageColType
+            }
+
+            $ErrorMessage = $ErrorMessages -join ' || '
+
+            throw $ErrorMessage
         }
     }
 
     # === check if UX, IndexNames and Name are available and if index isn't just ID ===
-    if (-not $DataUniqueIndex.ContainsKey('UX') -or -not $DataUniqueIndex.ContainsKey('IndexNames')) {throw "Index missing UX/IndexNames."}
-    if (-not $DataUniqueIndex.IndexNames -or $DataUniqueIndex.IndexNames.Count -eq 0) {throw "IndexNames are empty."}
-    if ($DataUniqueIndex.IndexNames.Name -eq 'Id' -or ($DataUniqueIndex.IndexNames | Where-Object Name -ne 'Id').Count -eq 0) {throw "Unique index must include at least one column other than 'Id'."}
+    if (-not ($DataUniqueIndex.ContainsKey('UX')) -or -not ($DataUniqueIndex.ContainsKey('IndexNames'))) {
+        $ErrorMessages = @()
+        if (-not ($DataUniqueIndex.ContainsKey('UX'))) {
+            $ErrorMessageDataUniqUX = Get-ErrorMessages -ErrorCode 'DBx0000006' -VariableName '$DataUniqueIndex' -VariableValue $DataTableName -Language $Language
+            $ErrorMessages += $ErrorMessageDataUniqUX
+        }
+        if (-not ($DataUniqueIndex.ContainsKey('IndexNames'))) {
+            $ErrorMessageDataUniqIN = Get-ErrorMessages -ErrorCode 'DBx0000007' -VariableName '$DataUniqueIndex' -VariableValue $DataTableName -Language $Language
+            $ErrorMessages += $ErrorMessageDataUniqIN
+        }
+
+        $ErrorMessage = $ErrorMessages -join ' || '
+
+        throw $ErrorMessage
+    }
+
+    if (-not $DataUniqueIndex.IndexNames -or $DataUniqueIndex.IndexNames.Count -eq 0) {
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000008' -VariableName '$DataUniqueIndex.IndexNames' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
+    }
+    
     foreach ($DataIndex in $DataUniqueIndex.IndexNames) {
         if ([string]::IsNullOrWhiteSpace($DataIndex.Name)) {
-            throw "IndexName missing Name."
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000009' -VariableName '$DataIndex.Name' -VariableValue $DataTableName -Language $Language
+            throw $ErrorMessage
         }
     }
 
     # === check naming pattern for $DataSchema ===
     if ($DataSchema.Table -notmatch $NamingPattern) {
-        throw "Invalid table name in schema: '$($DataSchema.Table)'. Allowed: letters/numbers/_ and shouldn't start with a number."
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000007' -VariableName '$DataSchema.Table' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
     }
     foreach ($DataColumn in $DataSchema.Columns) {
         if ($DataColumn.Name -notmatch $NamingPattern) {
-            throw "Invalid column name in schema: '$($DataColumn.Name)'. Allowed: letters/numbers/_ and shouldn't start with a number."
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000007' -VariableName '$DataColumn.Name' -VariableValue $DataTableName -Language $Language
+            throw $ErrorMessage
         }
     }
 
     # === check naming pattern for $DataUniqueIndex ===
     if ($DataUniqueIndex.UX -notmatch $NamingPattern) {
-        throw "Invalid UX name in index: '$($DataUniqueIndex.UX)'. Allowed: letters/numbers/_ and shouldn't start with a number."
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000007' -VariableName '$DataUniqueIndex.UX' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
     }
     foreach ($DataIndex in $DataUniqueIndex.IndexNames) {
         if ($DataIndex.Name -notmatch $NamingPattern) {
-            throw "Invalid column name in schema: '$($DataIndex.Name)'. Allowed: letters/numbers/_ and shouldn't start with a number."
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000007' -VariableName '$DataIndex.Name' -VariableValue $DataTableName -Language $Language
+            throw $ErrorMessage
         }
     }
 
@@ -64,21 +135,26 @@ function Test-SQLiteSchema {
     $DataSchemaColumnNames = $DataSchema.Columns | ForEach-Object { $_.Name }
     foreach ($DataIndex in $DataUniqueIndex.IndexNames) {
         if ($DataIndex.Name -notin $DataSchemaColumnNames) {
-            throw "Index column '$($DataIndex.Name)' is not defined in schema columns: $($DataSchemaColumnNames -join ', ')"
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000010' -VariableName '$DataIndex.Name' -VariableValue $DataTableName -Language $Language
+            throw $ErrorMessage
         }
     }
 
     # === check duplicate names inside IndexNames ===
     $IndexNamesLowerCase = $DataUniqueIndex.IndexNames | ForEach-Object {$_.Name.ToLowerInvariant()}
     $DuplicateIndexNames = $IndexNamesLowerCase | Group-Object | Where-Object Count -gt 1
-    if ($DuplicateIndexNames) {throw "IndexNames contains duplicates: $($DuplicateIndexNames.Name -join ', ')"}
+    if ($DuplicateIndexNames) {
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000011' -VariableName '$DataUniqueIndex.IndexNames' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
+    }
 
     # === check each column type ===
     $DataColumnNormalized = foreach ($DataColumn in $DataSchema.Columns) {
         $FormattedTypes = ($DataColumn.Type).Trim().ToUpperInvariant()
 
         if ($FormattedTypes -notin $AllowedTypes) {
-            throw "Invalid SQLite type for column '$($DataColumn.Name)': '$($DataColumn.Type)'. Allowed types: $($AllowedTypes -join ', ')"
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000012' -VariableName '$DataSchema.Columns' -VariableValue $DataTableName -Language $Language
+            throw $ErrorMessage
         }
 
         @{

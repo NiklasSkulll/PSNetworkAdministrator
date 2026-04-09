@@ -138,6 +138,7 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
+                @{Name='AddInName'; Type='TEXT'}
                 @{Name='AddInID'; Type='INTEGER'}
                 @{Name='AddInPassword'; Type='TEXT'}
             )

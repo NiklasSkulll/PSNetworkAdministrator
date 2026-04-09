@@ -32,6 +32,18 @@ function Get-ErrorMessages {
         'COx0000003' = 'TCP Connection failed'
         'COx0000004' = 'IPv4-Ping without response'
         'COx0000005' = 'CimSession failed'
+        'DBx0000001' = 'Data schema is missing Table' # DB = data base
+        'DBx0000002' = 'Data schema is missing Columns'
+        'DBx0000003' = 'Columns are empty'
+        'DBx0000004' = 'Column is missing Name'
+        'DBx0000005' = 'Column is missing Type'
+        'DBx0000006' = 'Index is missing UX'
+        'DBx0000007' = 'Index is missing IndexNames'
+        'DBx0000008' = 'IndexNames are empty'
+        'DBx0000009' = 'IndexNames is missing Name'
+        'DBx0000010' = 'Index column is not defined in schema columns'
+        'DBx0000011' = 'IndexNames contains duplicates'
+        'DBx0000012' = 'Invalid SQLite type for column. Allowed types: INTEGER/TEXT/REAL/BLOB'
         'FPx0000001' = 'Missing file' # FP = file path
         'FPx0000002' = 'Failed loading file'
         'FPx0000003' = 'Failed to write into file'
@@ -44,6 +56,7 @@ function Get-ErrorMessages {
         'VAx0000004' = 'Variable length must be 16, 24, or 32'
         'VAx0000005' = 'Variable has 0 elements'
         'VAx0000006' = 'Unknown variable name'
+        'VAx0000007' = 'Invalid name. Allowed: letters/numbers/_ and not start with a number'
     }
 
     $ErrorMessagesDE = @{
@@ -52,6 +65,18 @@ function Get-ErrorMessages {
         'COx0000003' = 'TCP-Verbindung ist fehlgeschlagen'
         'COx0000004' = 'IPv4-Ping ohne Antwort'
         'COx0000005' = 'Cim-Sitzung ist fehlgeschlagen'
+        'DBx0000001' = 'Datenbankschema hat keine Table' # DB = data base
+        'DBx0000002' = 'Datenbankschema hat keine Columns'
+        'DBx0000003' = 'Spalten sind leer'
+        'DBx0000004' = 'Spalte fehlt Name'
+        'DBx0000005' = 'Spalte fehlt Type'
+        'DBx0000006' = 'Index hat kein UX'
+        'DBx0000007' = 'Index hat kein IndexNames'
+        'DBx0000008' = 'IndexNames ist leer'
+        'DBx0000009' = 'IndexNames fehlt Name'
+        'DBx0000010' = 'Index-Spalte ist nicht in den Spalten des Schemas definiert'
+        'DBx0000011' = 'IndexNames enthält Duplikate'
+        'DBx0000012' = 'SQLite-Typ für Spalten ist invalide. Erlaubte Typen: INTEGER/TEXT/REAL/BLOB'
         'FPx0000001' = 'Fehlende Datei' # FP = file path
         'FPx0000002' = 'Datei konnte nicht geladen werden'
         'FPx0000003' = 'Es konnte nicht in die Datei geschrieben werden'
@@ -64,6 +89,7 @@ function Get-ErrorMessages {
         'VAx0000004' = 'Variable muss eine Zeichenlänge von 16, 24, oder 32 haben'
         'VAx0000005' = 'Variable hat 0 Elemente'
         'VAx0000006' = 'Unbekannter Variablenname'
+        'VAx0000007' = 'Name ist nicht valide. Erlaubt: Buchstaben/Nummern/_ und nicht mit einer Nummer starten'
     }
 
     # ===== creating a reference value for the error message =====
