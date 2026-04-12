@@ -15,21 +15,24 @@ function Initialize-SQLiteTable {
         [string]$DataFilePath,
 
         [Parameter(Mandatory)]
-        [pscustomobject]$DataObject
+        [pscustomobject]$DataObject,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
     # === initialize data schema ===
     try {
-        $InitializedDataSchema = Initialize-SQLiteSchema -DomainName $DomainName -DataTableName $DataTableName -DataObject $DataObject
+        $InitializedDataSchema = Initialize-SQLiteSchema -DomainName $DomainName -DataTableName $DataTableName -DataObject $DataObject -Language $Language
     }
     catch {
-        throw "Failed to initialize schema: $($_.Exception.Message)"
+        throw "$($_.Exception.Message)"
     }
 
     # === create table if it don't exists ===
     try {
         # checks file path
-        Initialize-FilePath -FilePath $DataFilePath
+        Initialize-FilePath -FilePath $DataFilePath -Language $Language
 
         # open SQLite connection
         $SQLiteConnection = [Microsoft.Data.Sqlite.SqliteConnection]::new("Data Source=$DataFilePath")
@@ -53,7 +56,8 @@ function Initialize-SQLiteTable {
         $SQLiteCommand.ExecuteNonQuery() | Out-Null
     }
     catch {
-        throw "Failed to create table: $($_.Exception.Message)"
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000013' -ExceptionMessage "$($_.Exception.Message)" -DomainName $DomainName -VariableName '$DataTableName' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
     }
     finally {
         # close SQLite command and connection

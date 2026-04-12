@@ -113,6 +113,7 @@ function Initialize-SQLiteSchema {
         }
     }
     catch {
-        throw "$($_.Exception.Message)"
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000003' -ExceptionMessage "$($_.Exception.Message)" -DomainName $DomainName -VariableName '$DataTableName' -VariableValue $DataTableName -Language $Language
+        throw $ErrorMessage
     }
 }

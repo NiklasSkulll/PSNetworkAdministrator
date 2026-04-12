@@ -44,11 +44,13 @@ function Get-ErrorMessages {
         'DBx0000010' = 'Index column is not defined in schema columns'
         'DBx0000011' = 'IndexNames contains duplicates'
         'DBx0000012' = 'Invalid SQLite type for column. Allowed types: INTEGER/TEXT/REAL/BLOB'
+        'DBx0000013' = 'Failed to create data table'
         'FPx0000001' = 'Missing file' # FP = file path
         'FPx0000002' = 'Failed loading file'
         'FPx0000003' = 'Failed to write into file'
         'INx0000001' = 'Failed to get domain informations' # IN = information
         'INx0000002' = 'Failed to get computer informations'
+        'INx0000003' = 'Failed to get SQLite data schema'
         'RMx0000001' = 'Administrator rights are required' # RM = rights management
         'VAx0000001' = 'Variable is NULL' # VA = variable
         'VAx0000002' = 'Variable is NULL/whitespace'
@@ -77,11 +79,13 @@ function Get-ErrorMessages {
         'DBx0000010' = 'Index-Spalte ist nicht in den Spalten des Schemas definiert'
         'DBx0000011' = 'IndexNames enthält Duplikate'
         'DBx0000012' = 'SQLite-Typ für Spalten ist invalide. Erlaubte Typen: INTEGER/TEXT/REAL/BLOB'
+        'DBx0000013' = 'Datenbanktabelle konnte nicht erstellt werden'
         'FPx0000001' = 'Fehlende Datei' # FP = file path
         'FPx0000002' = 'Datei konnte nicht geladen werden'
         'FPx0000003' = 'Es konnte nicht in die Datei geschrieben werden'
         'INx0000001' = 'Domaininformationen konnten nicht abgerufen werden' # IN = information
         'INx0000002' = 'Computerinformationen konnten nicht abgerufen werden'
+        'INx0000003' = 'SQLite-Datenschema konnte nicht abgerufen werden'
         'RMx0000001' = 'Administratorrechte werde benötigt' # RM = rights management
         'VAx0000001' = 'Variable ist NULL' # VA = variable
         'VAx0000002' = 'Variable ist NULL/besteht aus Leerzeichen'
