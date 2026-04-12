@@ -22,8 +22,10 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ComputerName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='DomainName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='MacAddress'; Type='TEXT'}
-                @{Name='ServerClientTag'; Type='TEXT'}
+                @{Name='HostRoleTag'; Type='TEXT'}
+                @{Name='SystemEnvironmentTag'; Type='TEXT'}
                 @{Name='GroupTag'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -51,6 +53,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='CPUReleaseDate'; Type='TEXT'}
                 @{Name='CPUStillNewDate'; Type='TEXT'}
                 @{Name='CPUMaxUsedDate'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -73,6 +76,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='OperatingSystemVersion'; Type='TEXT'}
                 @{Name='OSVersion'; Type='TEXT'}
                 @{Name='OSArchitecture'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -95,6 +99,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='Enabled'; Type='INTEGER'}
                 @{Name='InteractiveUser'; Type='TEXT'}
                 @{Name='AdminListDirectMembers'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -121,6 +126,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='WsManWinRM'; Type='INTEGER'}
                 @{Name='TCPConnection'; Type='INTEGER'}
                 @{Name='PingResponse'; Type='INTEGER'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -141,6 +147,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='AddInName'; Type='TEXT'}
                 @{Name='AddInID'; Type='INTEGER'}
                 @{Name='AddInPassword'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -160,6 +167,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ComputerADInformationsID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _ComputerADInformations_(ID)'}
                 @{Name='FSMORoles'; Type='TEXT'}
                 @{Name='GlobalCatalogs'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition
@@ -179,6 +187,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='UserName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='DomainName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='GroupTag'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # database index definition

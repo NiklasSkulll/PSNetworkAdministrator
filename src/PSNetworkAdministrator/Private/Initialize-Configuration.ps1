@@ -82,6 +82,11 @@ function Initialize-Configuration {
                 DefaultTimeout = $ConfigData.Network.DefaultTimeout
                 MaxRetries = $ConfigData.Network.MaxRetries
             }
+            Tags = [PSCustomObject]@{
+                HostRole = $ConfigData.Tags.HostRole
+                Group = $ConfigData.Tags.Group
+                SystemEnvironment = $ConfigData.Tags.SystemEnvironment
+            }
             AddIns = [PSCustomObject]@{
                 AddInCount = $ConfigData.AddIns.AddInCount
                 AddInNames = $ConfigData.AddIns.AddInNames

@@ -17,10 +17,16 @@
         MaxRetries = 3
     }
 
+    Tags = @{
+        HostRole = 'Client,Server'
+        Group = 'GroupA,GroupB'
+        SystemEnvironment = 'DEV,TEST,PRD'
+    }
+
     AddIns = @{
         AddInCount = '1'
         AddInNames = 'RDP'
-        AddInPaths = '...'
+        AddInPaths = 'mstsc.exe'
     }
 
     UI = @{
