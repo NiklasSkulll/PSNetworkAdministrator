@@ -10,22 +10,18 @@ function Get-ErrorMessages {
 
         [string]$ExceptionMessage,
 
-        [string]$DomainName,
-        [string]$ComputerName,
-        [string]$VariableName,
-
-        $VariableValue,
+        [string]$RefValue,
 
         [ValidateSet('de', 'en')]
         [string]$Language = 'en'
     )
     
-    # ===== check if ErrorCode is NULL/whitespace =====
+    # ===== Check if ErrorCode is NULL/whitespace =====
     if ([string]::IsNullOrWhiteSpace($ErrorCode)) {
-        if ($Language -eq "de") {$ErrorCode = 'ErrorCode-NULL/Leerzeichen'} else {$ErrorCode = 'ErrorCode-NULL/whitespace'}
+        $ErrorCode = if ($Language -eq "de") {'ErrorCode-NULL/Leerzeichen'} else {'ErrorCode-NULL/whitespace'}
     }
 
-    # ===== mapping: ErrorCode to error message (en, de) =====
+    # ===== Mapping: ErrorCode to error message (en, de) =====
     $ErrorMessagesEN = @{
         'COx0000001' = 'DNS not resolvable' # CO = connection
         'COx0000002' = 'WSMan/WinRM not reachable'
@@ -104,25 +100,7 @@ function Get-ErrorMessages {
         'VAx0000007' = 'Name ist nicht valide. Erlaubt: Buchstaben/Nummern/_ und nicht mit einer Nummer starten'
     }
 
-    # ===== creating a reference value for the error message =====
-    $RefValues = @()
-    
-    if ($DomainName -or $ComputerName -or $VariableName -or $VariableValue) {
-        $RefValueComAndVar = if ($ComputerName -and $VariableName) {"$ComputerName-$VariableName"} else {$null}
-
-        if ($DomainName) {$RefValues += $DomainName}
-        if ($RefValueComAndVar) {$RefValues += $RefValueComAndVar}
-        if ($VariableValue) {$RefValues += $VariableValue}
-        if (-not $RefValueComAndVar) {
-            if ($ComputerName) {$RefValues += $ComputerName}
-            if ($VariableName) {$RefValues += $VariableName}
-        }
-    }
-
-    $RefValuesJoin = $RefValues -join '|'
-    $RefValue = "|$RefValuesJoin|"
-
-    # ===== get the correct error message from the ErrorCode =====
+    # ===== Get the correct error message from the ErrorCode =====
     $AppErrorMessage = if ($Language -eq "de") {
         if ($ErrorMessagesDE.ContainsKey($ErrorCode)) {$ErrorMessagesDE[$ErrorCode]} else {$null}
     }
@@ -130,30 +108,32 @@ function Get-ErrorMessages {
         if ($ErrorMessagesEN.ContainsKey($ErrorCode)) {$ErrorMessagesEN[$ErrorCode]} else {$null}
     }
 
-    # ===== check if AppErrorMessage is NULL =====
-    if ($null -eq $AppErrorMessage) {
-        if($Language -eq "de") {
-            $AppErrorMessage = "ErrorCode ist nicht verfügbar"
-        }
-        else {
-            $AppErrorMessage = "ErrorCode is not available"
-        }
+    # ===== Check the $AppErrorMessage variable =====
+    if (-not $AppErrorMessage) {
+        $AppErrorMessage = if ($Language -eq "de") {'ErrorCode ist nicht verfügbar'} else {'ErrorCode is not available'}
     }
 
-    # ===== create the final error message =====
+    # ===== Create the final error message =====
     $SpecificErrorMessage = if ($RefValue) {
-        if ($ExceptionMessage) {
-            "$RefValue '$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage."
+        if ($ExceptionMessage.StartsWith("<")) {
+            "$RefValue <'$ErrorCode': $AppErrorMessage. >> $ExceptionMessage.>"
+        }
+        elseif ($ExceptionMessage) {
+            "$RefValue <'$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage.>"
         }
         else {
-            "$RefValue '$ErrorCode': $AppErrorMessage."
+            "$RefValue <'$ErrorCode': $AppErrorMessage.>"
         }
-    } else {
-        if ($ExceptionMessage) {
-            "'$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage."
+    }
+    else {
+        if ($ExceptionMessage.StartsWith("<")) {
+            "<'$ErrorCode': $AppErrorMessage. >> $ExceptionMessage.>"
+        }
+        elseif ($ExceptionMessage) {
+            "<'$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage.>"
         }
         else {
-            "'$ErrorCode': $AppErrorMessage."
+            "<'$ErrorCode': $AppErrorMessage.>"
         }
     }
 
