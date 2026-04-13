@@ -46,18 +46,24 @@ function Add-Domain {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$DomainName
+        [string]$DomainName,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
+    
     # === checks if input is empty/null/whitespace ===
-    $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-    if (-not $DomainNameIsNotEmpty) {throw "Domain name is null/empty."}
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    if (-not ($DomainNameCheck.Success)) {throw "$($DomainNameCheck.Message)"}
 
     # === trims input ===
     $DomainName = $DomainName.Trim()
 
     # === return the domain ===
-    Write-AppLogging -LoggingMessage "Domain manually added: $DomainName" -LoggingLevel "Info"
+    $InfoMessage = if ($Language -eq "de") {'Domain wurde manuell hinzugefügt'} else {'Domain manually added'}
+    Write-AppLogging -LoggingMessage "|$DomainName| $InfoMessage." -LoggingLevel 'Info' -Language $Language
+
     return [PSCustomObject]@{
-            Domain = $DomainName
-        }
+        Domain = $DomainName
+    }
 }

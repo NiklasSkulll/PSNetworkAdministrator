@@ -56,19 +56,32 @@ function Add-DomainCredentials {
         [string]$DomainName,
     
         [Parameter(Mandatory)]
-        [PSCredential]$Credential
+        [PSCredential]$Credential,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
     # === store credential in Windows Credential Manager ===
     try {
-        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-        $CredentialIsNotEmpty = Test-FunctionVariables -Param $Credential
-        if (-not $DomainNameIsNotEmpty -or -not $CredentialIsNotEmpty) {throw "Domain name/Credential is null/empty."}
+        $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+        $CredentialCheck = Test-FunctionVariables -Param $Credential -ParamName '$Credential' -Language $Language
+
+        if (-not ($DomainNameCheck.Success) -or -not ($CredentialCheck.Success)) {
+            $ErrorMessages = @()
+            if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
+            if (-not ($CredentialCheck.Success)) {$ErrorMessages += $CredentialCheck.Message}
+        
+            $ErrorMessage = $ErrorMessages -join ' || '
+
+            throw $ErrorMessage
+        }
 
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         New-StoredCredential -Target $UniqueIdentifier -UserName $Credential.UserName -Password $Credential.GetNetworkCredential().Password -Type Generic -Persist LocalMachine
 
-        Write-AppLogging -LoggingMessage "Credentials stored for domain: $DomainName" -LoggingLevel "Info"
+        $InfoMessage = if ($Language -eq "de") {'Für diese Domain wurden Credentials gespeichert'} else {'Credentials are stored for this domain'}
+        Write-AppLogging -LoggingMessage "|$DomainName| $InfoMessage." -LoggingLevel 'Info' -Language $Language
 
         return [PSCustomObject]@{
             Domain = $DomainName
@@ -77,7 +90,8 @@ function Add-DomainCredentials {
         }
     }
     catch {
-        Write-AppLogging -LoggingMessage "Failed to store credentials for domain '$DomainName': $($_.Exception.Message)" -LoggingLevel "Error"
-        throw "Failed to store credentials for domain '$DomainName': $($_.Exception.Message)"
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000005' -ExceptionMessage "$($_.Exception.Message)" -DomainName $DomainName -Language $Language
+        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language
+        throw $ErrorMessage
     }
 }
