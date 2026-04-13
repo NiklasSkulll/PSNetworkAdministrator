@@ -54,6 +54,7 @@ function Get-ErrorMessages {
         'INx0000003' = 'Failed to get SQLite data schema'
         'INx0000004' = 'Failed to load SQLite DLL during PSNetworkAdministrator module import'
         'INx0000005' = 'Failed to store credentials'
+        'INx0000006' = 'Failed to start a process'
         'RMx0000001' = 'Administrator rights are required' # RM = rights management
         'VAx0000001' = 'Variable is NULL' # VA = variable
         'VAx0000002' = 'Variable is NULL/whitespace'
@@ -92,6 +93,7 @@ function Get-ErrorMessages {
         'INx0000003' = 'SQLite-Datenschema konnte nicht abgerufen werden'
         'INx0000004' = 'SQLite DLL konnte beim Importieren des PSNetworkAdministrator-Modules nicht geladen werden'
         'INx0000005' = 'Credentials konnten nicht gespeichert werden'
+        'INx0000006' = 'Prozess konnte nicht gestartet werden'
         'RMx0000001' = 'Administratorrechte werde benötigt' # RM = rights management
         'VAx0000001' = 'Variable ist NULL' # VA = variable
         'VAx0000002' = 'Variable ist NULL/besteht aus Leerzeichen'

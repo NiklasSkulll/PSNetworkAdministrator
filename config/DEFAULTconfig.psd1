@@ -24,9 +24,10 @@
     }
 
     AddIns = @{
-        AddInCount = '1'
+        AddInCount = 1
         AddInNames = 'RDP'
         AddInPaths = 'mstsc.exe'
+        AddInArguments = '/v:{Computer}.{Domain}'
     }
 
     UI = @{

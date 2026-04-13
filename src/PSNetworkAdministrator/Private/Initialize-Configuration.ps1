@@ -91,6 +91,7 @@ function Initialize-Configuration {
                 AddInCount = $ConfigData.AddIns.AddInCount
                 AddInNames = $ConfigData.AddIns.AddInNames
                 AddInPaths = $ConfigData.AddIns.AddInPaths
+                AddInArguments = $ConfigData.AddIns.AddInArguments
             }
             UI = [PSCustomObject]@{
                 Theme = $ConfigData.UI.Theme
