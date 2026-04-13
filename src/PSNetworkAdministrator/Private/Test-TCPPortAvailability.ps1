@@ -64,10 +64,7 @@ function Test-TCPPortAvailability {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$DomainName,
-
-        [Parameter(Mandatory)]
-        [string]$ComputerName,
+        [string]$HostName,
 
         [Parameter(Mandatory)]
         [ValidateRange(1,65535)]
@@ -78,21 +75,8 @@ function Test-TCPPortAvailability {
     )
 
     # === check function variables ===
-    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
-    $ComputerNameCheck = Test-FunctionVariables -Param $ComputerName -ParamName '$ComputerName' -Language $Language
-
-    if (-not ($DomainNameCheck.Success) -or -not ($ComputerNameCheck.Success)) {
-        $ErrorMessages = @()
-        if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
-        if (-not ($ComputerNameCheck.Success)) {$ErrorMessages += $ComputerNameCheck.Message}
-        
-        $ErrorMessage = $ErrorMessages -join ' || '
-
-        throw $ErrorMessage
-    }
-
-    # === define HostName variable for the connection ===
-    $HostName = "$ComputerName.$DomainName"
+    $HostNameCheck = Test-FunctionVariables -Param $HostName -ParamName '$HostName' -Language $Language
+    if (-not ($HostNameCheck.Success)) {throw "$($HostNameCheck.Message)"}
 
     # === define a timeout variable for the port check ===
     $TimeoutMs = $script:ModuleConfig.Network.DefaultTimeout

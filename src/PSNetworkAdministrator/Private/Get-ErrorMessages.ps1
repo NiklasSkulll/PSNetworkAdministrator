@@ -30,7 +30,7 @@ function Get-ErrorMessages {
         'COx0000001' = 'DNS not resolvable' # CO = connection
         'COx0000002' = 'WSMan/WinRM not reachable'
         'COx0000003' = 'TCP Connection failed'
-        'COx0000004' = 'IPv4-Ping without response'
+        'COx0000004' = 'Ping without response'
         'COx0000005' = 'CimSession failed'
         'DBx0000001' = 'Data schema is missing Table' # DB = data base
         'DBx0000002' = 'Data schema is missing Columns'
@@ -69,7 +69,7 @@ function Get-ErrorMessages {
         'COx0000001' = 'DNS kann nicht aufgelöst werden' # CO = connection
         'COx0000002' = 'WSMan/WinRM nicht erreichbar'
         'COx0000003' = 'TCP-Verbindung ist fehlgeschlagen'
-        'COx0000004' = 'IPv4-Ping ohne Antwort'
+        'COx0000004' = 'Ping ohne Antwort'
         'COx0000005' = 'Cim-Sitzung ist fehlgeschlagen'
         'DBx0000001' = 'Datenbankschema hat keine Table' # DB = data base
         'DBx0000002' = 'Datenbankschema hat keine Columns'
