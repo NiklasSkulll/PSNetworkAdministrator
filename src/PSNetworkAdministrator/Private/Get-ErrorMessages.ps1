@@ -16,126 +16,120 @@ function Get-ErrorMessages {
         [string]$Language = 'en'
     )
     
-    # ===== Check if ErrorCode is NULL/whitespace =====
-    if ([string]::IsNullOrWhiteSpace($ErrorCode)) {
-        $ErrorCode = if ($Language -eq "de") {'ErrorCode-NULL/Leerzeichen'} else {'ErrorCode-NULL/whitespace'}
-    }
+    # ===== Check if $ErrorCode is null or whitespace =====
+    if ([string]::IsNullOrWhiteSpace($ErrorCode)) {$ErrorCode = 'SYx0000001'}
 
-    # ===== Mapping: ErrorCode to error message (en, de) =====
+    # ===== Mapping: $ErrorCode to error message (en, de) =====
     $ErrorMessagesEN = @{
-        'COx0000001' = 'DNS not resolvable' # CO = connection
-        'COx0000002' = 'WSMan/WinRM not reachable'
-        'COx0000003' = 'TCP Connection failed'
-        'COx0000004' = 'Ping without response'
-        'COx0000005' = 'CimSession failed'
-        'DBx0000001' = 'Data schema is missing Table' # DB = data base
-        'DBx0000002' = 'Data schema is missing Columns'
-        'DBx0000003' = 'Columns are empty'
-        'DBx0000004' = 'Column is missing Name'
-        'DBx0000005' = 'Column is missing Type'
-        'DBx0000006' = 'Index is missing UX'
-        'DBx0000007' = 'Index is missing IndexNames'
-        'DBx0000008' = 'IndexNames are empty'
-        'DBx0000009' = 'IndexNames is missing Name'
-        'DBx0000010' = 'Index column is not defined in schema columns'
-        'DBx0000011' = 'IndexNames contains duplicates'
-        'DBx0000012' = 'Invalid SQLite type for column. Allowed types: INTEGER/TEXT/REAL/BLOB'
-        'DBx0000013' = 'Failed to create data table'
-        'DBx0000014' = 'Failed to add data into SQLite'
-        'FPx0000001' = 'Missing file' # FP = file path
-        'FPx0000002' = 'Failed loading file'
-        'FPx0000003' = 'Failed to write into file'
-        'INx0000001' = 'Failed to get domain informations' # IN = information
-        'INx0000002' = 'Failed to get computer informations'
-        'INx0000003' = 'Failed to get SQLite data schema'
-        'INx0000004' = 'Failed to load SQLite DLL during PSNetworkAdministrator module import'
-        'INx0000005' = 'Failed to store credentials'
-        'INx0000006' = 'Failed to start a process'
-        'RMx0000001' = 'Administrator rights are required' # RM = rights management
-        'VAx0000001' = 'Variable is NULL' # VA = variable
-        'VAx0000002' = 'Variable is NULL/whitespace'
+        'COx0000001' = 'Failed to resolve DNS' # CO = connection
+        'COx0000002' = 'Failed to reach WSMan/WinRM'
+        'COx0000003' = 'Failed to connect via TCP'
+        'COx0000004' = 'Failed to ping target'
+        'COx0000005' = 'Failed to create CimSession'
+        'DBx0000001' = 'Schema is missing required property' # DB = data base
+        'DBx0000002' = 'Schema property is empty'
+        'DBx0000003' = 'Schema property contains duplicates'
+        'DBx0000004' = 'Schema reference is undefined'
+        'DBx0000005' = 'SQLite column type is invalid'
+        'DBx0000006' = 'Failed to create data table'
+        'DBx0000007' = 'Failed to insert data into SQLite'
+        'DBx0000008' = 'Failed to get schema'
+        'IOx0000001' = 'File not found' # IO = input/output
+        'IOx0000002' = 'Failed to load file'
+        'IOx0000003' = 'Failed to write to file'
+        'PRx0000001' = 'Administrative privileges are required' # PR = privileges
+        'SYx0000001' = 'ErrorCode is null or whitespace' # SY = system/runtime
+        'SYx0000002' = 'ErrorCode is unknown'
+        'SYx0000003' = 'Failed to get domain information'
+        'SYx0000004' = 'Failed to get computer information'
+        'SYx0000005' = 'Failed to load SQLite DLL'
+        'SYx0000006' = 'SQLite DLL not found'
+        'SYx0000007' = 'Failed to store credentials'
+        'SYx0000008' = 'Failed to start a process'
+        'SYx0000009' = 'Failed to dot-source all functions'
+        'SYx0000010' = 'Module not found'
+        'SYx0000011' = 'Failed to import module'
+        'VAx0000001' = 'Variable is null' # VA = variable
+        'VAx0000002' = 'Variable is null or whitespace'
         'VAx0000003' = 'Variable length is 0'
         'VAx0000004' = 'Variable length must be 16, 24, or 32'
-        'VAx0000005' = 'Variable has 0 elements'
-        'VAx0000006' = 'Unknown variable name'
-        'VAx0000007' = 'Invalid name. Allowed: letters/numbers/_ and not start with a number'
+        'VAx0000005' = 'Variable has no elements'
+        'VAx0000006' = 'Variable name is unknown'
+        'VAx0000007' = 'Name is invalid. Only letters, numbers and underscores allowed and not start with a number'
     }
 
     $ErrorMessagesDE = @{
         'COx0000001' = 'DNS kann nicht aufgelöst werden' # CO = connection
         'COx0000002' = 'WSMan/WinRM nicht erreichbar'
-        'COx0000003' = 'TCP-Verbindung ist fehlgeschlagen'
-        'COx0000004' = 'Ping ohne Antwort'
-        'COx0000005' = 'Cim-Sitzung ist fehlgeschlagen'
-        'DBx0000001' = 'Datenbankschema hat keine Table' # DB = data base
-        'DBx0000002' = 'Datenbankschema hat keine Columns'
-        'DBx0000003' = 'Spalten sind leer'
-        'DBx0000004' = 'Spalte fehlt Name'
-        'DBx0000005' = 'Spalte fehlt Type'
-        'DBx0000006' = 'Index hat kein UX'
-        'DBx0000007' = 'Index hat kein IndexNames'
-        'DBx0000008' = 'IndexNames ist leer'
-        'DBx0000009' = 'IndexNames fehlt Name'
-        'DBx0000010' = 'Index-Spalte ist nicht in den Spalten des Schemas definiert'
-        'DBx0000011' = 'IndexNames enthält Duplikate'
-        'DBx0000012' = 'SQLite-Typ für Spalten ist invalide. Erlaubte Typen: INTEGER/TEXT/REAL/BLOB'
-        'DBx0000013' = 'Datenbanktabelle konnte nicht erstellt werden'
-        'DBx0000014' = 'Daten konnten nicht in SQLite hinzugefügt werden'
-        'FPx0000001' = 'Fehlende Datei' # FP = file path
-        'FPx0000002' = 'Datei konnte nicht geladen werden'
-        'FPx0000003' = 'Es konnte nicht in die Datei geschrieben werden'
-        'INx0000001' = 'Domaininformationen konnten nicht abgerufen werden' # IN = information
-        'INx0000002' = 'Computerinformationen konnten nicht abgerufen werden'
-        'INx0000003' = 'SQLite-Datenschema konnte nicht abgerufen werden'
-        'INx0000004' = 'SQLite DLL konnte beim Importieren des PSNetworkAdministrator-Modules nicht geladen werden'
-        'INx0000005' = 'Credentials konnten nicht gespeichert werden'
-        'INx0000006' = 'Prozess konnte nicht gestartet werden'
-        'RMx0000001' = 'Administratorrechte werde benötigt' # RM = rights management
+        'COx0000003' = 'TCP-Verbindung fehlgeschlagen'
+        'COx0000004' = 'Ping erhielt keine Antwort'
+        'COx0000005' = 'Cim-Sitzung konnte nicht erstellt werden'
+        'DBx0000001' = 'Im Datenbankschema fehlt die erforderliche Eigenschaft' # DB = data base
+        'DBx0000002' = 'Datenbankschema-Eigenschaft ist leer'
+        'DBx0000003' = 'Datenbankschema-Eigenschaft enthält Duplikate'
+        'DBx0000004' = 'Datenbankschema-Referenz ist undefiniert'
+        'DBx0000005' = 'SQLite-Spaltentyp ist ungültig'
+        'DBx0000006' = 'Datenbanktabelle konnte nicht erstellt werden'
+        'DBx0000007' = 'Daten konnten nicht in SQLite eingefügt werden'
+        'DBx0000008' = 'Datenbankschema konnte nicht abgerufen werden'
+        'IOx0000001' = 'Datei fehlt' # IO = input/output
+        'IOx0000002' = 'Datei konnte nicht geladen werden'
+        'IOx0000003' = 'Datei konnte nicht beschrieben werden'
+        'PRx0000001' = 'Administratorrechte sind erforderlich' # PR = privileges
+        'SYx0000001' = 'ErrorCode ist NULL oder besteht nur aus Leerzeichen' # SY = system/runtime
+        'SYx0000002' = 'ErrorCode ist unbekannt'
+        'SYx0000003' = 'Domaininformationen konnten nicht abgerufen werden'
+        'SYx0000004' = 'Computerinformationen konnten nicht abgerufen werden'
+        'SYx0000005' = 'SQLite-DLL konnte nicht geladen werden'
+        'SYx0000006' = 'SQLite-DLL fehlt'
+        'SYx0000007' = 'Anmeldeinformationen konnten nicht gespeichert werden'
+        'SYx0000008' = 'Prozess konnte nicht gestartet werden'
+        'SYx0000009' = 'Alle Funktionen konnten nicht per Dot-Source geladen werden'
+        'SYx0000010' = 'Modul fehlt'
+        'SYx0000011' = 'Modul konnte nicht importiert werden'
         'VAx0000001' = 'Variable ist NULL' # VA = variable
-        'VAx0000002' = 'Variable ist NULL/besteht aus Leerzeichen'
-        'VAx0000003' = 'Variable hat eine Zeichenlänge von 0'
-        'VAx0000004' = 'Variable muss eine Zeichenlänge von 16, 24, oder 32 haben'
-        'VAx0000005' = 'Variable hat 0 Elemente'
-        'VAx0000006' = 'Unbekannter Variablenname'
-        'VAx0000007' = 'Name ist nicht valide. Erlaubt: Buchstaben/Nummern/_ und nicht mit einer Nummer starten'
+        'VAx0000002' = 'Variable ist NULL oder besteht nur aus Leerzeichen'
+        'VAx0000003' = 'Variable hat die Zeichenlänge 0'
+        'VAx0000004' = 'Variable hat nicht die Zeichenlänge von 16, 24, oder 32'
+        'VAx0000005' = 'Variable enthält keine Elemente'
+        'VAx0000006' = 'Variablenname ist unbekannt'
+        'VAx0000007' = 'Name ist ungültig. Nur Buchstaben, Zahlen und Unterstrich sind erlaubt und darf nicht mit einer Zahl beginnen'
     }
 
-    # ===== Get the correct error message from the ErrorCode =====
-    $AppErrorMessage = if ($Language -eq "de") {
-        if ($ErrorMessagesDE.ContainsKey($ErrorCode)) {$ErrorMessagesDE[$ErrorCode]} else {$null}
-    }
-    else {
-        if ($ErrorMessagesEN.ContainsKey($ErrorCode)) {$ErrorMessagesEN[$ErrorCode]} else {$null}
-    }
+    # ===== Get the correct error message from $ErrorCode =====
+    $ErrorMessagesRef = if ($Language -eq "de") {$ErrorMessagesDE} else {$ErrorMessagesEN}
+    $AppErrorMessage = if ($ErrorMessagesRef.ContainsKey($ErrorCode)) {$ErrorMessagesRef[$ErrorCode]} else {$null}
 
     # ===== Check the $AppErrorMessage variable =====
     if (-not $AppErrorMessage) {
-        $AppErrorMessage = if ($Language -eq "de") {'ErrorCode ist nicht verfügbar'} else {'ErrorCode is not available'}
+        $ErrorCodeRef = 'SYx0000002'
+        $AppErrorMessage = if ($ErrorMessagesRef.ContainsKey($ErrorCodeRef)) {$ErrorMessagesRef[$ErrorCodeRef]} else {$null}
     }
 
     # ===== Create the final error message =====
     $SpecificErrorMessage = if ($RefValue) {
-        if ($ExceptionMessage.StartsWith("<")) {
-            "$RefValue <'$ErrorCode': $AppErrorMessage. >> $ExceptionMessage.>"
+        if ($ExceptionMessage -and $ExceptionMessage.StartsWith('[')) {
+            "[$ErrorCode] $AppErrorMessage | Ref=$RefValue >> $ExceptionMessage"
         }
         elseif ($ExceptionMessage) {
-            "$RefValue <'$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage.>"
+            "[$ErrorCode] $AppErrorMessage | Ref=$RefValue | Exception=$ExceptionMessage"
         }
         else {
-            "$RefValue <'$ErrorCode': $AppErrorMessage.>"
+            "[$ErrorCode] $AppErrorMessage | Ref=$RefValue"
         }
     }
     else {
-        if ($ExceptionMessage.StartsWith("<")) {
-            "<'$ErrorCode': $AppErrorMessage. >> $ExceptionMessage.>"
+        if ($ExceptionMessage -and $ExceptionMessage.StartsWith('[')) {
+            "[$ErrorCode] $AppErrorMessage >> $ExceptionMessage"
         }
         elseif ($ExceptionMessage) {
-            "<'$ErrorCode': $AppErrorMessage. 'ExceptionMessage': $ExceptionMessage.>"
+            "[$ErrorCode] $AppErrorMessage | Exception=$ExceptionMessage"
         }
         else {
-            "<'$ErrorCode': $AppErrorMessage.>"
+            "[$ErrorCode] $AppErrorMessage"
         }
     }
 
+    # ===== Return the error message =====
     return $SpecificErrorMessage
 }

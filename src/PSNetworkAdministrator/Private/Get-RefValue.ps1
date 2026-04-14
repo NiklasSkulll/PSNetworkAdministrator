@@ -9,7 +9,10 @@ function Get-RefValue {
         [string]$ComputerName,
         [string]$VariableName,
 
-        $Value
+        $Value,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
     # ===== Check the function variables =====
@@ -25,22 +28,26 @@ function Get-RefValue {
         if (-not ($VariableNameCheck.Success)) {$ErrorMessages += $VariableNameCheck.Message}
         if (-not ($ValueCheck.Success)) {$ErrorMessages += $ValueCheck.Message}
         
-        $ErrorMessage = $ErrorMessages -join ' || '
+        $ErrorMessage = $ErrorMessages -join '; '
 
         throw $ErrorMessage
     }
 
     # ===== Create a reference value for a message =====
-    $RefValueComAndVar = if ($ComputerName -and $VariableName) {"$ComputerName-$VariableName"} else {$null}
+    $RefValueDomAndCom = if ($DomainNameCheck.Success -and $ComputerNameCheck.Success) {"$DomainName-$ComputerName"} else {$null}
+    $RefValueVarAndVal = if ($VariableNameCheck.Success -and $ValueCheck.Success) {"$VariableName='$Value'"} else {$null}
 
     $RefValues = @()
-    if ($DomainName) {$RefValues += $DomainName}
-    if ($RefValueComAndVar) {$RefValues += $RefValueComAndVar}
-    if (-not $RefValueComAndVar) {
-        if ($ComputerName) {$RefValues += $ComputerName}
-        if ($VariableName) {$RefValues += $VariableName}
+    if ($RefValueDomAndCom) {$RefValues += $RefValueDomAndCom}
+    if (-not $RefValueDomAndCom) {
+        if ($DomainNameCheck.Success) {$RefValues += $DomainName}
+        if ($ComputerNameCheck.Success) {$RefValues += $ComputerName}
     }
-    if ($Value) {$RefValues += $Value}
+    if ($RefValueVarAndVal) {$RefValues += $RefValueVarAndVal}
+    if (-not $RefValueVarAndVal) {
+        if ($VariableNameCheck.Success) {$RefValues += $VariableName}
+        if ($ValueCheck.Success) {$RefValues += $Value}
+    }
 
     $RefValuesJoin = $RefValues -join '|'
     $RefValue = "<$RefValuesJoin>"

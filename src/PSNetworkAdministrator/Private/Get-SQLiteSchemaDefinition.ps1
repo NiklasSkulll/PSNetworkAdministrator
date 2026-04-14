@@ -200,7 +200,8 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     else {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000006' -VariableName '$DataTableName' -VariableValue $DataTableName -Language $Language
+        $RefValue = Get-RefValue -VariableName '$DataTableName' -Value $DataTableName -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000006' -RefValue $RefValue -Language $Language
         throw $ErrorMessage
     }
 

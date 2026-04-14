@@ -4,7 +4,7 @@
 # generated on: 02.02.2026
 # ------------------------------
 
-# === dot-source all private, public and service functions ===
+# ===== Dot-source all private, public and service functions =====
 try {
     Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
         . $_.FullName
@@ -17,44 +17,72 @@ try {
     }
 }
 catch {
-    throw "Failed to dot-source all private, public and service functions: $($_.Exception.Message)"
+    $RefValue = '<PSNetworkAdministrator|Module>'
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000009' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+
+    Write-Warning $ErrorMessage
+    throw $ErrorMessage
 }
 
-# === check module availability: CredentialManager, ActiveDirectory ===
-if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
-    throw "CredentialManager module not found. Install Modul: Install-Module -Name CredentialManager -Force -Scope CurrentUser"
+# ===== Load config and initialize path for logs =====
+try {
+    $script:ModuleConfig = Initialize-Configuration
+    $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath
 }
-if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
-    Write-Warning "ActiveDirectory module not found. Install RSAT tools: Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
+catch {
+    $script:LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
+
+    $RefValue = '<PSNetworkAdministrator|Module|Config>'
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000002' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+
+    Write-Warning $ErrorMessage
 }
 
-# === import modules: CredentialManager, ActiveDirectory ===
+# ===== Check module availability: ActiveDirectory, CredentialManager =====
+if (-not (Get-Module -ListAvailable -Name CredentialManager) -or -not (Get-Module -ListAvailable -Name ActiveDirectory)) {
+    $ErrorMessages = @()
+    if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
+        $Message = Get-ErrorMessages -ErrorCode 'SYx0000010' -RefValue '<ActiveDirectory>'
+        $ErrorMessages += $Message
+    }
+    if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
+        $Message = Get-ErrorMessages -ErrorCode 'SYx0000010' -RefValue '<CredentialManager>'
+        $ErrorMessages += $Message
+    }
+    $ErrorMessage = $ErrorMessages -join '; '
+
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'
+    throw $ErrorMessage
+}
+
+# ===== Import modules: CredentialManager, ActiveDirectory =====
 try {
     Import-Module CredentialManager -ErrorAction Stop
     Import-Module ActiveDirectory -ErrorAction Stop
 }
 catch {
-    Write-Warning "Failed to import modules: $($_.Exception.Message)"
+    $RefValue = '<ActiveDirectory|CredentialManager>'
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000011' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+    
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
 }
 
-# === SQLite dependency ===
+# ===== SQLite dependency =====
 
-# variables for DB + dependencies folders
+# Create variables for DB + dependencies folders
 $script:DataRoot = Join-Path $PSScriptRoot 'Data'
 $script:DBFolder = Join-Path $script:DataRoot 'db'
 $script:DepsFolder = Join-Path $script:DataRoot 'deps'
 
-# check if folders exist and create them
+# Check if folders exist and create them
 foreach ($DBPath in @($script:DBFolder, $script:DepsFolder)) {
-    if (-not (Test-Path -LiteralPath $DBPath)) {
-        New-Item -ItemType Directory -Path $DBPath -Force | Out-Null
-    }
+    if (-not (Test-Path -LiteralPath $DBPath)) {New-Item -ItemType Directory -Path $DBPath -Force | Out-Null}
 }
 
-# default DB file path
+# Default DB file path
 $script:DBFilePath = Join-Path $script:DBFolder 'PSNetworkAdministrator.sqlite'
 
-# load SQLite provider DLL
+# Load SQLite provider DLL
 $script:SQLiteAvailable = $false
 $SQLiteDll = Join-Path $script:DepsFolder 'Microsoft.Data.Sqlite.dll'
 
@@ -65,19 +93,16 @@ if (Test-Path -LiteralPath $SQLiteDll) {
     }
     catch {
         $script:SQLiteAvailable = $false
-        Write-Warning "Failed to load SQLite DLL from '$SQLiteDll': $($_.Exception.Message)"
+        
+        $RefValue = '<PSNetworkAdministrator|Module>'
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000005' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+    
+        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
     }
 }
 else {
-    Write-Warning "SQLite DLL not found at '$SQLiteDll'. Put Microsoft.Data.Sqlite.dll (and any dependency DLLs) into Data\deps."
-}
-
-# === load config and initialize path and max logging size for logs ===
-try {
-    $script:ModuleConfig = Initialize-Configuration
-    $script:LoggingPath = $script:ModuleConfig.Logging.LoggingPath
-}
-catch {
-    $script:LoggingPath = (Join-Path $PSScriptRoot "..\..\..\logs\PSNetAdmin.log")
-    Write-Warning "$($_.Exception.Message)"
+    $RefValue = '<PSNetworkAdministrator|Module>'
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000006' -RefValue $RefValue
+    
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
 }
