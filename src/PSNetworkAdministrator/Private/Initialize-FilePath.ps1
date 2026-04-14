@@ -12,9 +12,10 @@ function Initialize-FilePath {
         [string]$Language = 'en'
     )
 
-    # ===== get file directory =====
+    # ===== Check the function variable =====
     $FilePathCheck = Test-FunctionVariables -Param $FilePath -ParamName '$FilePath' -Language $Language
 
+    # ===== Get file directory =====
     if ($FilePathCheck.Success) {
         $FileDirectory = Split-Path -Path $FilePath -Parent
     }
@@ -22,7 +23,7 @@ function Initialize-FilePath {
         throw "$($FilePathCheck.Message)"
     }
 
-    # ===== check database folder, creates it =====
+    # ===== Check database folder and create it =====
     $FileDirectoryCheck = Test-FunctionVariables -Param $FileDirectory -ParamName '$FileDirectory' -Language $Language
 
     if ($FileDirectoryCheck.Success) {

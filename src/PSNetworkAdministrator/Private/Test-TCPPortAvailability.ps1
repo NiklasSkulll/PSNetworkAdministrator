@@ -74,30 +74,29 @@ function Test-TCPPortAvailability {
         [string]$Language = 'en'
     )
 
-    # === check function variables ===
+    # ===== Check function variables =====
     $HostNameCheck = Test-FunctionVariables -Param $HostName -ParamName '$HostName' -Language $Language
     if (-not ($HostNameCheck.Success)) {throw "$($HostNameCheck.Message)"}
 
-    # === define a timeout variable for the port check ===
+    # ===== Define a timeout variable for the port check =====
     $TimeoutMs = $script:ModuleConfig.Network.DefaultTimeout
 
-    # === check the port connection with a TCP client object and a in-progress connect operation ===
+    # ===== Check the port connection with a TCP client object and a in-progress connect operation =====
     try {
         $TCPClient = [System.Net.Sockets.TcpClient]::new()
         $InProgressConnection = $TCPClient.BeginConnect($HostName, $Port, $null, $null)
 
-        # return $false by connection timeout
-        if (-not $InProgressConnection.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) {
-            return $false
-        }
+        # Return $false by connection timeout
+        if (-not $InProgressConnection.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) {return $false}
 
+        # Return $true by success
         return $true
     }
     catch {
         return $false
     }
     finally {
-        # connection was successfull, close connection and return $true
+        # Close connection
         if ($TCPClient -or $InProgressConnection) {
             $TCPClient.EndConnect($InProgressConnection)
             $TCPClient.Close()

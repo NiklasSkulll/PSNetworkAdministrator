@@ -26,34 +26,34 @@ function Test-FunctionVariables {
 
         if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
 
-        return [PSCustomObject]@{
+        return [pscustomobject]@{
             Success = $false
             Message = $ErrorMessage
         }
     }
 
-    # ===== Validate if $Param is a string and check on null or whitespace =====
+    # ===== Validate if $Param is a string and check if null or whitespace =====
     if ($Param -is [string]) {
         if ([string]::IsNullOrWhiteSpace($Param)) {
             $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000002' -RefValue $RefValue -Language $Language
 
             if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
 
-            return [PSCustomObject]@{
+            return [pscustomobject]@{
                 Success = $false
                 Message = $ErrorMessage
             }
         }
     }
 
-    # ===== Validate if $Param is a list/array/etc. and check if its empty =====
+    # ===== Validate if $Param is a list/array/etc. and check if empty =====
     if ($Param -is [System.Collections.ICollection]) {
         if ($Param.Count -eq 0) {
             $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000005' -RefValue $RefValue -Language $Language
 
             if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
 
-            return [PSCustomObject]@{
+            return [pscustomobject]@{
                 Success = $false
                 Message = $ErrorMessage
             }
@@ -64,8 +64,8 @@ function Test-FunctionVariables {
     $SuccessMessage = if ($Language -eq "de") {'Variable ist gültig'} else {'Variable is valid'}
     $SuccessMessageFull = "$SuccessMessage | Ref=$RefValue"
 
-    # ===== return $true =====
-    return [PSCustomObject]@{
+    # ===== Return $true =====
+    return [pscustomobject]@{
         Success = $true
         Message = $SuccessMessageFull
     }

@@ -42,17 +42,18 @@ function Initialize-Configuration {
     [CmdletBinding()]
     param()
 
-    # ===== create the user config variable =====
+    # ===== Create config variables (user and default) =====
     $DefaultConfigPath = Join-Path $PSScriptRoot "..\..\..\config\DEFAULTconfig.psd1"
     $UserConfigPath = Join-Path $PSScriptRoot "..\..\..\config\config.psd1"
 
-    # ===== check if config file is available =====
+    # ===== Check if config file is available =====
     if (-not (Test-Path $UserConfigPath)) {
         if (Test-Path $DefaultConfigPath) {
             Copy-Item -Path $DefaultConfigPath -Destination $UserConfigPath
         }
         else {
-            $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000001' -VariableName '$DefaultConfigPath' -VariableValue $DefaultConfigPath
+            $RefValue = Get-RefValue -VariableName '$DefaultConfigPath' -Value $DefaultConfigPath
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000001' -RefValue $RefValue
             throw $ErrorMessage
         }
     }
@@ -61,39 +62,46 @@ function Initialize-Configuration {
             Copy-Item -Path $DefaultConfigPath -Destination $UserConfigPath -Force
         }
         else {
-            $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000001' -VariableName '$DefaultConfigPath' -VariableValue $DefaultConfigPath
+            $RefValue = Get-RefValue -VariableName '$DefaultConfigPath' -Value $DefaultConfigPath
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000001' -RefValue $RefValue
             throw $ErrorMessage
-        }  
+        }
     }
 
-    # ===== load config file data =====
+    # ===== Load config file data =====
     try {
         $ConfigData = Import-PowerShellDataFile -Path $UserConfigPath
 
-        return [PSCustomObject]@{
+        return [pscustomobject]@{
             AppName = $ConfigData.AppName
             Version = $ConfigData.Version
-            Logging = [PSCustomObject]@{
+            Logging = [pscustomobject]@{
                 Enabled = $ConfigData.Logging.Enabled
                 LoggingPath = $ConfigData.Logging.LoggingPath
                 MaxLoggingSizeMB = $ConfigData.Logging.MaxLoggingSizeMB
             }
-            Network = [PSCustomObject]@{
+            Network = [pscustomobject]@{
                 DefaultTimeout = $ConfigData.Network.DefaultTimeout
                 MaxRetries = $ConfigData.Network.MaxRetries
             }
-            Tags = [PSCustomObject]@{
+            Database = [pscustomobject]@{
+                DBRoot = $ConfigData.Database.DBRoot
+                DBFolder = $ConfigData.Database.DBFolder
+                DepsFolder = $ConfigData.Database.DepsFolder
+                DBName = $ConfigData.Database.DBName
+            }
+            Tags = [pscustomobject]@{
                 HostRole = $ConfigData.Tags.HostRole
                 Group = $ConfigData.Tags.Group
                 SystemEnvironment = $ConfigData.Tags.SystemEnvironment
             }
-            AddIns = [PSCustomObject]@{
+            AddIns = [pscustomobject]@{
                 AddInCount = $ConfigData.AddIns.AddInCount
                 AddInNames = $ConfigData.AddIns.AddInNames
                 AddInPaths = $ConfigData.AddIns.AddInPaths
                 AddInArguments = $ConfigData.AddIns.AddInArguments
             }
-            UI = [PSCustomObject]@{
+            UI = [pscustomobject]@{
                 Theme = $ConfigData.UI.Theme
                 WindowWidth = $ConfigData.UI.WindowWidth
                 WindowHeight = $ConfigData.UI.WindowHeight
@@ -101,7 +109,8 @@ function Initialize-Configuration {
         }
     }
     catch {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000002' -ExceptionMessage "$($_.Exception.Message)" -VariableName '$UserConfigPath' -VariableValue $UserConfigPath
+        $RefValue = Get-RefValue -VariableName '$UserConfigPath' -Value $UserConfigPath
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000002' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
         throw $ErrorMessage
     }
 }

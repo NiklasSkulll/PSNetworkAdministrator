@@ -78,27 +78,27 @@ function Write-AppLogging {
         [string]$Language = 'en'
     )
     
-    # === get current date and time ===
+    # ===== Get current date and time =====
     $LoggingTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $CurrentDate = $LoggingTimestamp.Split(' ')[0]
     $CurrentTime = $LoggingTimestamp.Split(' ')[1]
 
-    # === extract directory, file name (with/without extension) ===
+    # ===== Extract directory and file name (with/without extension) =====
     $LoggingDirectory = Split-Path -Parent $LoggingPath
     $LogFileName = Split-Path -Leaf $LoggingPath
     $LogFileNameNoExt = [System.IO.Path]::GetFileNameWithoutExtension($LogFileName)
     $LogFileNameJustExt = [System.IO.Path]::GetExtension($LogFileName)
 
-    # === create log directory, if it doesn't exist ===
+    # ===== Create log directory, if it doesn't exist =====
     Initialize-FilePath -FilePath $LoggingPath -Language $Language
 
-    # === variable for target log file ===
+    # ===== Create variable for target log file =====
     $TargetLoggingPath = $null
 
-    # === check for existing log files ===
+    # ===== Check for existing log files =====
     $ExistingLogFiles = Get-ChildItem -Path $LoggingDirectory -Filter "$LogFileNameNoExt*$LogFileNameJustExt" -ErrorAction SilentlyContinue
     
-    # === search log file that hasn't exceeded the size limit ===
+    # ===== Search log file that hasn't exceeded the size limit =====
     if ($ExistingLogFiles) {
         foreach ($LoggingFile in $ExistingLogFiles) {
             $FileSizeMB = [math]::Round($LoggingFile.length / 1MB, 2)
@@ -109,18 +109,19 @@ function Write-AppLogging {
         }
     }
 
-    # === create a new log file (if none is found) ===
+    # ===== Create a new log file (if none is found) =====
     if (-not $TargetLoggingPath) {
         $TargetLoggingPath = Join-Path $LoggingDirectory "$LogFileNameNoExt.$CurrentDate$LogFileNameJustExt"
     }
 
-    # === format and write log entry ===
+    # ===== Format and write log entry =====
     $LoggingEntry = "[$CurrentDate][$CurrentTime][$LoggingLevel]: $LoggingMessage"
     try {
         Add-Content -Path $TargetLoggingPath -Value $LoggingEntry
     }
     catch {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'FPx0000003' -ExceptionMessage "$($_.Exception.Message)" -VariableName '$TargetLoggingPath' -VariableValue $TargetLoggingPath -Language $Language
+        $RefValue = Get-RefValue -VariableName '$TargetLoggingPath' -Value $TargetLoggingPath -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000003' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
         throw $ErrorMessage
     }
 }

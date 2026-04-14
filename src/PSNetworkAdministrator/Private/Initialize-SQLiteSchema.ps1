@@ -18,7 +18,7 @@ function Initialize-SQLiteSchema {
         [string]$Language = 'en'
     )
 
-    # ===== check function parameter =====
+    # ===== Check the function variables =====
     $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
     $DataTableNameCheck = Test-FunctionVariables -Param $DataTableName -ParamName '$DataTableName' -Language $Language
     $DataObjectCheck = Test-FunctionVariables -Param $DataObject -ParamName '$DataObject' -Language $Language
@@ -29,30 +29,33 @@ function Initialize-SQLiteSchema {
         if (-not ($DataTableNameCheck.Success)) {$ErrorMessages += $DataTableNameCheck.Message}
         if (-not ($DataObjectCheck.Success)) {$ErrorMessages += $DataObjectCheck.Message}
         
-        $ErrorMessage = $ErrorMessages -join ' || '
+        $ErrorMessage = $ErrorMessages -join '; '
 
         throw $ErrorMessage
     }
 
-    # ===== check table and get schema =====
+    # ===== Check table and get schema =====
     try {
         $DataSchemaFull = Get-SQLiteSchemaDefinition -DataTableName $DataTableName -Language $Language
         $DataSchema = $DataSchemaFull.DataSchema
         $DataUniqueIndex = $DataSchemaFull.DataUniqueIndex
     }
     catch {
-        throw "$($_.Exception.Message)"
+        $RefValue = Get-RefValue -VariableName '$DataTableName' -Value $DataTableName -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000008' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
+        throw $ErrorMessage
     }
 
-    # ===== check data schema content =====
+    # ===== Check data schema content =====
     $DataSchemaFullCheck = Test-FunctionVariables -Param $DataSchemaFull -ParamName '$DataSchemaFull' -Language $Language
     if (-not ($DataSchemaFullCheck.Success)) {throw "$($DataSchemaFullCheck.Message)"}
 
+    # ===== Initialize schema and return formatted schema properties =====
     try {
-        # validate $DataSchema
+        # Validate $DataSchema
         $DataSchemaValidated = Test-SQLiteSchema -DataSchema $DataSchema -DataUniqueIndex $DataUniqueIndex -DataTableName $DataTableName -Language $Language
 
-        # store all column names with and without 'ID'
+        # Store all column names with and without 'ID'
         $AllColumnNames = $DataSchemaValidated.Columns | ForEach-Object {$_.Name}
         $AllColumnNamesWithoutID = $AllColumnNames | Where-Object {$_ -ne 'ID'}
 
@@ -72,7 +75,7 @@ function Initialize-SQLiteSchema {
             $DataIndexName
         }
 
-        # join list with commas, format table name
+        # Join list with commas and format table name
         $DataTableColumnList = $DataTableColumnParts -join ", "
         $DataUniqueIndexList = $DataUniqueIndexParts -join ", "
         $AllColumnNamesWithoutIDList = ($AllColumnNamesWithoutID | ForEach-Object { '"' + $_ + '"' }) -join ', '
@@ -80,15 +83,16 @@ function Initialize-SQLiteSchema {
         $QuotedDataTableName = '"' + $DataSchemaValidated.Table + '"'
         $QuotedUX = '"' + $DataUniqueIndex.UX + '"'
 
-        # order the values of the $DataObject
+        # Order the values of the $DataObject
         $DataValuesInOrder = Write-SQLiteSchemaValuesInOrder -DataObject $DataObject -AllColumnNamesWithoutID $AllColumnNamesWithoutID -DomainName $DomainName -Language $Language
 
-        # create a list of placeholders for the values
+        # Create a list of placeholders for the values
         $DataValuesInOrder = @($DataValuesInOrder)
         $CountDataValues = $DataValuesInOrder.Count
 
         if ($CountDataValues -eq 0) {
-            $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000005' -VariableName '$DataValuesInOrder' -Language $Language
+            $RefValue = Get-RefValue -VariableName '$DataValuesInOrder' -Language $Language
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000005' -RefValue $RefValue -Language $Language
             throw $ErrorMessage
         }
 
@@ -96,8 +100,8 @@ function Initialize-SQLiteSchema {
         $DataValuesPlaceholder = 0..($CountDataValues-1) | ForEach-Object { "$SQLParamName$_" }
         $DataValuePlaceholderList = $DataValuesPlaceholder -join ", "
 
-        # return important formatted schema
-        return [PSCustomObject]@{
+        # Return important formatted schema
+        return [pscustomobject]@{
             DataTableName = $DataSchemaValidated.Table
             QuotedDataTableName = $QuotedDataTableName
             DataTableColumnList = $DataTableColumnList
@@ -113,7 +117,8 @@ function Initialize-SQLiteSchema {
         }
     }
     catch {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000003' -ExceptionMessage "$($_.Exception.Message)" -DomainName $DomainName -VariableName '$DataTableName' -VariableValue $DataTableName -Language $Language
+        $RefValue = Get-RefValue -VariableName '$DataTableName' -Value $DataTableName -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'DBx0000009' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
         throw $ErrorMessage
     }
 }

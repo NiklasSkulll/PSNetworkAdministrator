@@ -38,19 +38,22 @@ function Test-ExecutionContext {
     [CmdletBinding()]
     param()
 
-    # === get the current user status ===
+    # ===== Create reference value for messages =====
+    $RefValue = '<PowerShell|Terminal>'
+
+    # ===== Get the current user status =====
     $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     $IsAdmin = $CurrentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-    # === check if the PowerShell runs as "Administrator" ===
+    # ===== Check if the PowerShell runs as "Administrator" =====
     if ($IsAdmin) {
-        return [PSCustomObject]@{
+        return [pscustomobject]@{
             Passed = $true
-            Message = "|PowerShell|: Running as Administrator."
+            Message = "Running with administrative privileges | Ref=$RefValue"
         }
     }
     else {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'RMx0000001' -VariableValue 'PowerShell'
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'PRx0000001' -RefValue $RefValue
         throw $ErrorMessage
     }
 }

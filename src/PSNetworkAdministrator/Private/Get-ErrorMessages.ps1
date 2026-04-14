@@ -34,6 +34,7 @@ function Get-ErrorMessages {
         'DBx0000006' = 'Failed to create data table'
         'DBx0000007' = 'Failed to insert data into SQLite'
         'DBx0000008' = 'Failed to get schema'
+        'DBx0000009' = 'Failed to initialize schema'
         'IOx0000001' = 'File not found' # IO = input/output
         'IOx0000002' = 'Failed to load file'
         'IOx0000003' = 'Failed to write to file'
@@ -46,9 +47,8 @@ function Get-ErrorMessages {
         'SYx0000006' = 'SQLite DLL not found'
         'SYx0000007' = 'Failed to store credentials'
         'SYx0000008' = 'Failed to start a process'
-        'SYx0000009' = 'Failed to dot-source all functions'
-        'SYx0000010' = 'Module not found'
-        'SYx0000011' = 'Failed to import module'
+        'SYx0000009' = 'Module not found'
+        'SYx0000010' = 'Failed to import module'
         'VAx0000001' = 'Variable is null' # VA = variable
         'VAx0000002' = 'Variable is null or whitespace'
         'VAx0000003' = 'Variable length is 0'
@@ -72,6 +72,7 @@ function Get-ErrorMessages {
         'DBx0000006' = 'Datenbanktabelle konnte nicht erstellt werden'
         'DBx0000007' = 'Daten konnten nicht in SQLite eingefügt werden'
         'DBx0000008' = 'Datenbankschema konnte nicht abgerufen werden'
+        'DBx0000009' = 'Datenbankschema konnte nicht initialisiert werden'
         'IOx0000001' = 'Datei fehlt' # IO = input/output
         'IOx0000002' = 'Datei konnte nicht geladen werden'
         'IOx0000003' = 'Datei konnte nicht beschrieben werden'
@@ -84,9 +85,8 @@ function Get-ErrorMessages {
         'SYx0000006' = 'SQLite-DLL fehlt'
         'SYx0000007' = 'Anmeldeinformationen konnten nicht gespeichert werden'
         'SYx0000008' = 'Prozess konnte nicht gestartet werden'
-        'SYx0000009' = 'Alle Funktionen konnten nicht per Dot-Source geladen werden'
-        'SYx0000010' = 'Modul fehlt'
-        'SYx0000011' = 'Modul konnte nicht importiert werden'
+        'SYx0000009' = 'Modul fehlt'
+        'SYx0000010' = 'Modul konnte nicht importiert werden'
         'VAx0000001' = 'Variable ist NULL' # VA = variable
         'VAx0000002' = 'Variable ist NULL oder besteht nur aus Leerzeichen'
         'VAx0000003' = 'Variable hat die Zeichenlänge 0'

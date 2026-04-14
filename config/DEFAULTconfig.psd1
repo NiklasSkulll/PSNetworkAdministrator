@@ -1,5 +1,5 @@
 # ------------------------------
-# configuration file for the "PSNetworkAdministrator"-Tool
+# Configuration file for the "PSNetworkAdministrator"-Tool
 # ------------------------------
 
 @{
@@ -15,6 +15,13 @@
     Network = @{
         DefaultTimeout = 800
         MaxRetries = 3
+    }
+
+    Database = @{
+        DBRoot = (Join-Path $PSScriptRoot "Data")
+        DBFolder = (Join-Path $PSScriptRoot "Data\db")
+        DepsFolder = (Join-Path $PSScriptRoot "Data\deps")
+        DBName = 'PSNetworkAdministrator.sqlite'
     }
 
     Tags = @{

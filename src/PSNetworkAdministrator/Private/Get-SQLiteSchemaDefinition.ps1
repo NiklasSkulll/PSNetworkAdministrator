@@ -12,9 +12,9 @@ function Get-SQLiteSchemaDefinition {
         [string]$Language = 'en'
     )
 
-    # ===== return the right database schema =====
+    # ===== Return the right database schema =====
     if ($DataTableName -eq "_DomainComputers_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_DomainComputers_'
             Columns = @(
@@ -28,7 +28,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_DomainComputers_DomainName_ComputerName'
             IndexNames = @(
@@ -38,7 +38,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerSystemInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerSystemInformations_'
             Columns = @(
@@ -56,7 +56,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerSystemInformations_DomainComputersID'
             IndexNames = @(
@@ -65,7 +65,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerOSInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerOSInformations_'
             Columns = @(
@@ -79,7 +79,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerOSInformations_DomainComputersID'
             IndexNames = @(
@@ -88,7 +88,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerADInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerADInformations_'
             Columns = @(
@@ -102,7 +102,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerADInformations_DomainComputersID'
             IndexNames = @(
@@ -111,7 +111,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerNetworkInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerNetworkInformations_'
             Columns = @(
@@ -129,7 +129,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerNetworkInformations_DomainComputersID'
             IndexNames = @(
@@ -138,7 +138,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerAddInsInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerAddInsInformations_'
             Columns = @(
@@ -150,7 +150,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerAddInsInformations_ID'
             IndexNames = @(
@@ -159,7 +159,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_ComputerDCInformations_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_ComputerDCInformations_'
             Columns = @(
@@ -170,7 +170,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerDCInformations_ComputerADInformationsID'
             IndexNames = @(
@@ -179,7 +179,7 @@ function Get-SQLiteSchemaDefinition {
         }
     }
     elseif ($DataTableName -eq "_DomainUsers_") {
-        # database schema
+        # Database schema
         $DataSchema = @{
             Table = '_DomainUsers_'
             Columns = @(
@@ -190,7 +190,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
-        # database index definition
+        # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_DomainUsers_DomainName_UserName'
             IndexNames = @(
@@ -205,7 +205,8 @@ function Get-SQLiteSchemaDefinition {
         throw $ErrorMessage
     }
 
-    return [PSCustomObject]@{
+    # ===== Return the database schema =====
+    return [pscustomobject]@{
         DataSchema = $DataSchema
         DataUniqueIndex = $DataUniqueIndex
     }
