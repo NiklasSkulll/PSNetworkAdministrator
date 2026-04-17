@@ -117,15 +117,15 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
+                @{Name='DNSHostName'; Type='TEXT'}
                 @{Name='IPv4Address'; Type='TEXT'}
                 @{Name='SubnetMask'; Type='TEXT'}
-                @{Name='DNSHostName'; Type='TEXT'}
                 @{Name='UsesDHCP'; Type='INTEGER'}
                 @{Name='UsesWINS'; Type='INTEGER'}
                 @{Name='DNSResolve'; Type='INTEGER'}
+                @{Name='PingResponse'; Type='INTEGER'}
                 @{Name='WsManWinRM'; Type='INTEGER'}
                 @{Name='TCPConnection'; Type='INTEGER'}
-                @{Name='PingResponse'; Type='INTEGER'}
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
@@ -144,8 +144,10 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
-                @{Name='AddInName'; Type='TEXT'}
                 @{Name='AddInID'; Type='INTEGER'}
+                @{Name='AddInName'; Type='TEXT'}
+                @{Name='AddInPath'; Type='TEXT'}
+                @{Name='AddInArgument'; Type='TEXT'}
                 @{Name='AddInPassword'; Type='TEXT'}
                 @{Name='ObservationDate'; Type='TEXT'}
             )

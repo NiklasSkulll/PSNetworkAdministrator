@@ -49,29 +49,40 @@ function Get-DomainCredentials {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$DomainName
+        [string]$DomainName,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
-    # === get the stored credential with the unique identifier ===
-    try {
-        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-        if (-not $DomainNameIsNotEmpty) {throw "Domain name is null/empty."}
+    # ===== Check the function variables =====
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    if (-not ($DomainNameCheck.Success)) {throw "$($DomainNameCheck.Message)"}
 
+    # ===== Get credentials from Windows Credential Manager =====
+    try {
+        # Get the stored credentials with the unique id
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         $StoredCred = Get-StoredCredential -Target $UniqueIdentifier
 
+        # Check $StoredCred
         if ($null -eq $StoredCred) {
-            Write-AppLogging -LoggingMessage "No credentials found for domain: $DomainName" -LoggingLevel "Error"
-            throw "No credentials found for domain: $DomainName"
+            $RefValue = Get-RefValue -DomainName $DomainName -AdditionalRef 'Credentials' -Language $Language
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000012' -RefValue $RefValue -Language $Language
+            throw $ErrorMessage
         }
 
-        return [PSCustomObject]@{
-            Domain = $DomainName
-            DomainCredentials = $StoredCred
+        # Return stored credentials
+        return [pscustomobject]@{
+            DomainName = $DomainName
+            Credential = $StoredCred
         }
     }
     catch {
-        Write-AppLogging -LoggingMessage "Failed to get credentials for domain '$DomainName': $($_.Exception.Message)" -LoggingLevel "Error"
-        throw "Failed to get credentials for domain '$DomainName': $($_.Exception.Message)"
+        $RefValue = Get-RefValue -DomainName $DomainName -AdditionalRef 'Credentials' -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000012' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
+
+        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language
+        throw $ErrorMessage
     }
 }

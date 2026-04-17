@@ -39,12 +39,12 @@ function Open-AddIns {
         if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
         if (-not ($ComputerNameCheck.Success)) {$ErrorMessages += $ComputerNameCheck.Message}
         
-        $ErrorMessage = $ErrorMessages -join ' || '
+        $ErrorMessage = $ErrorMessages -join '; '
 
         throw $ErrorMessage
     }
 
-    # ===== open add-in  =====
+    # ===== Open AddIn =====
     try {
         $ResolvedArgument = $AddInArgument
         $Placeholders = @{
@@ -59,7 +59,8 @@ function Open-AddIns {
         Start-Process -FilePath $AddInPath -ArgumentList $ResolvedArgument
     }
     catch {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000006' -ExceptionMessage "$($_.Exception.Message)" -VariableName '$AddInName' -VariableValue $AddInName -Language $Language
+        $RefValue = Get-RefValue -VariableName '$AddInName' -Value $AddInName -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000006' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
         throw $ErrorMessage
     }
 }

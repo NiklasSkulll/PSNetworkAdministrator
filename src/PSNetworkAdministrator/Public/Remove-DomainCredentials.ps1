@@ -50,36 +50,49 @@ function Remove-DomainCredentials {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$DomainName
+        [string]$DomainName,
+
+        [ValidateSet('de', 'en')]
+        [string]$Language = 'en'
     )
 
-    # === remove the stored credential with the unique identifier ===
+    # ===== Check the function variables =====
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    if (-not ($DomainNameCheck.Success)) {throw "$($DomainNameCheck.Message)"}
+
+    # ===== Remove credentials from Windows Credential Manager =====
     try {
-        $DomainNameIsNotEmpty = Test-FunctionVariables -Param $DomainName
-        if (-not $DomainNameIsNotEmpty) {throw "Domain name is null/empty."}
-        
+        # Get the stored credentials with the unique id
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         $StoredCred = Get-StoredCredential -Target $UniqueIdentifier
 
+        # Check $StoredCred
         if ($null -eq $StoredCred) {
-            Write-AppLogging -LoggingMessage "Couldn't remove credentials. No credentials found for domain: $DomainName" -LoggingLevel "Warning"
-            return [PSCustomObject]@{
-                Domain = $DomainName
-                Removed = $false
-                Reason = "Credential not found."
-            }
+            $RefValue = Get-RefValue -DomainName $DomainName -AdditionalRef 'Credentials' -Language $Language
+            $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000012' -RefValue $RefValue -Language $Language
+            throw $ErrorMessage
         }
         
+        # Remove the stored credentials with the unique id
         Remove-StoredCredential -Target $UniqueIdentifier
-        Write-AppLogging -LoggingMessage "Successfully removed credentials for domain: $DomainName" -LoggingLevel "Info"
-        return [PSCustomObject]@{
-            Domain = $DomainName
+
+        # Write info message in logs
+        $InfoMessageText = if ($Language -eq "de") {'Credentials wurden entfernt'} else {'Credentials are removed'}
+        $InfoMessage = "$InfoMessageText | Ref=$RefValue"
+        Write-AppLogging -LoggingMessage $InfoMessage -LoggingLevel 'Info' -Language $Language
+
+        # Return status information
+        return [pscustomobject]@{
+            DomainName = $DomainName
             Removed = $true
-            Storage = "Windows Credential Manager"
+            Storage = 'Windows Credential Manager'
         }
     }
     catch {
-        Write-AppLogging -LoggingMessage "Failed to remove credentials for domain '$DomainName': $($_.Exception.Message)" -LoggingLevel "Error"
-        throw "Failed to remove credentials for domain '$DomainName': $($_.Exception.Message)"
+        $RefValue = Get-RefValue -DomainName $DomainName -AdditionalRef 'Credentials' -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000013' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
+
+        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language
+        throw $ErrorMessage
     }
 }

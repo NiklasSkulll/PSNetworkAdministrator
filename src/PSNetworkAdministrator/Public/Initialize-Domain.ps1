@@ -41,19 +41,26 @@ function Initialize-Domain {
     [CmdletBinding()]
     param()
 
-    # === check if user is in a domain (true/false) ===
+    # ===== Check if user is in a domain =====
     $IsDomain = (Get-CimInstance Win32_ComputerSystem).PartOfDomain
 
-    # === return domain name ===
+    # ===== Return domain name =====
     if ($IsDomain) {
         $DomainName = (Get-CimInstance Win32_ComputerSystem).Domain
-        Write-AppLogging -LoggingMessage "User is in domain: $DomainName" -LoggingLevel "Info"
+
+        $RefValue = Get-RefValue -DomainName $DomainName
+        $InfoMessageText = 'Domain has been detected'
+        $InfoMessage = "$InfoMessageText | Ref=$RefValue"
+
+        Write-AppLogging -LoggingMessage $InfoMessage -LoggingLevel 'Info'
         
-        Return [PSCustomObject]@{
-            Domain = $DomainName
+        Return [pscustomobject]@{
+            DomainName = $DomainName
         }
     }
     else {
-        throw "User isn't in a domain. Please add a domain."
+        $RefValue = Get-RefValue -VariableName '$IsDomain' -Value $IsDomain
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000011' -RefValue $RefValue
+        throw $ErrorMessage
     }
 }

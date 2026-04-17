@@ -49,6 +49,9 @@ function Get-ErrorMessages {
         'SYx0000008' = 'Failed to start a process'
         'SYx0000009' = 'Module not found'
         'SYx0000010' = 'Failed to import module'
+        'SYx0000011' = 'Failed to detect a domain'
+        'SYx0000012' = 'Failed to get information'
+        'SYx0000013' = 'Failed to remove credentials'
         'VAx0000001' = 'Variable is null' # VA = variable
         'VAx0000002' = 'Variable is null or whitespace'
         'VAx0000003' = 'Variable length is 0'
@@ -87,6 +90,9 @@ function Get-ErrorMessages {
         'SYx0000008' = 'Prozess konnte nicht gestartet werden'
         'SYx0000009' = 'Modul fehlt'
         'SYx0000010' = 'Modul konnte nicht importiert werden'
+        'SYx0000011' = 'Domain konnte nicht erkannt werden'
+        'SYx0000012' = 'Information konnten nicht abgerufen werden'
+        'SYx0000013' = 'Anmeldeinformationen konnten nicht entfernt werden'
         'VAx0000001' = 'Variable ist NULL' # VA = variable
         'VAx0000002' = 'Variable ist NULL oder besteht nur aus Leerzeichen'
         'VAx0000003' = 'Variable hat die Zeichenlänge 0'

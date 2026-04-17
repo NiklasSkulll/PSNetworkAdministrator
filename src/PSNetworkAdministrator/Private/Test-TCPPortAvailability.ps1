@@ -64,7 +64,7 @@ function Test-TCPPortAvailability {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$HostName,
+        [string]$DNSHostName,
 
         [Parameter(Mandatory)]
         [ValidateRange(1,65535)]
@@ -75,8 +75,8 @@ function Test-TCPPortAvailability {
     )
 
     # ===== Check function variables =====
-    $HostNameCheck = Test-FunctionVariables -Param $HostName -ParamName '$HostName' -Language $Language
-    if (-not ($HostNameCheck.Success)) {throw "$($HostNameCheck.Message)"}
+    $DNSHostNameCheck = Test-FunctionVariables -Param $DNSHostName -ParamName '$DNSHostName' -Language $Language
+    if (-not ($DNSHostNameCheck.Success)) {throw "$($DNSHostNameCheck.Message)"}
 
     # ===== Define a timeout variable for the port check =====
     $TimeoutMs = $script:ModuleConfig.Network.DefaultTimeout
@@ -84,7 +84,7 @@ function Test-TCPPortAvailability {
     # ===== Check the port connection with a TCP client object and a in-progress connect operation =====
     try {
         $TCPClient = [System.Net.Sockets.TcpClient]::new()
-        $InProgressConnection = $TCPClient.BeginConnect($HostName, $Port, $null, $null)
+        $InProgressConnection = $TCPClient.BeginConnect($DNSHostName, $Port, $null, $null)
 
         # Return $false by connection timeout
         if (-not $InProgressConnection.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) {return $false}

@@ -52,18 +52,22 @@ function Add-Domain {
         [string]$Language = 'en'
     )
     
-    # === checks if input is empty/null/whitespace ===
+    # ===== Check the function variable =====
     $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
     if (-not ($DomainNameCheck.Success)) {throw "$($DomainNameCheck.Message)"}
 
-    # === trims input ===
+    # ===== Trim input =====
     $DomainName = $DomainName.Trim()
 
-    # === return the domain ===
-    $InfoMessage = if ($Language -eq "de") {'Domain wurde manuell hinzugefügt'} else {'Domain manually added'}
-    Write-AppLogging -LoggingMessage "|$DomainName| $InfoMessage." -LoggingLevel 'Info' -Language $Language
+    # ===== Write info message in logs =====
+    $RefValue = Get-RefValue -DomainName $DomainName -Language $Language
+    $InfoMessageText = if ($Language -eq "de") {'Domain wurde manuell hinzugefügt'} else {'Domain manually added'}
+    $InfoMessage = "$InfoMessageText | Ref=$RefValue"
 
-    return [PSCustomObject]@{
+    Write-AppLogging -LoggingMessage $InfoMessage -LoggingLevel 'Info' -Language $Language
+
+    # ===== Return the domain name =====
+    return [pscustomobject]@{
         Domain = $DomainName
     }
 }

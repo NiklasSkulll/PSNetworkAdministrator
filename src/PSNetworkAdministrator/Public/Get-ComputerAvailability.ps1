@@ -98,7 +98,12 @@ function Get-ComputerAvailability {
         [Parameter(Mandatory)]
         [string]$DNSHostName,
 
+        [Parameter(Mandatory)]
+        [string]$IPv4Address,
+
         [string]$OperatingSystem,
+
+        [string]$SystemEnvironmentTag,
 
         [ValidateSet('de', 'en')]
         [string]$Language = 'en'
@@ -108,13 +113,14 @@ function Get-ComputerAvailability {
     $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
     $ComputerNameCheck = Test-FunctionVariables -Param $ComputerName -ParamName '$ComputerName' -Language $Language
     $DNSHostNameCheck = Test-FunctionVariables -Param $DNSHostName -ParamName '$DNSHostName' -Language $Language
+    $IPv4AddressCheck = Test-FunctionVariables -Param $IPv4Address -ParamName '$IPv4Address' -Language $Language
 
     if (-not ($DomainNameCheck.Success) -or -not ($ComputerNameCheck.Success)) {
         $ErrorMessages = @()
         if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
         if (-not ($ComputerNameCheck.Success)) {$ErrorMessages += $ComputerNameCheck.Message}
         
-        $ErrorMessage = $ErrorMessages -join ' || '
+        $ErrorMessage = $ErrorMessages -join '; '
 
         throw $ErrorMessage
     }
@@ -122,16 +128,24 @@ function Get-ComputerAvailability {
     # ===== Define the connection target =====
     $ConnectionTarget = if ($DNSHostNameCheck.Success) {$DNSHostName} else {"$ComputerName.$DomainName"}
 
-    # ===== Check if the network is reachable via ping =====
-    if (Test-Connection -TargetName $ConnectionTarget -Quiet -Count 1 -TimeoutSeconds 1 -ErrorAction SilentlyContinue) {$PingResponse = $true} else {$PingResponse = $false}
+    # ===== Check if the DNS name of $ConnectionTarget is resolvable =====
+    $DNSResolve = if (Resolve-DnsName -Name $ConnectionTarget -ErrorAction SilentlyContinue) {$true} else {$false}
 
-    # ===== Check if the DNS name of the computer is resolvable =====
-    if (Resolve-DnsName -Name $ConnectionTarget -ErrorAction SilentlyContinue) {$DNSResolve = $true} else {$DNSResolve = $false}
+    # ===== Redefine $ConnectionTarget if $DNSResolve is $false =====
+    $ConnectionTarget = if ($DNSResolve) {
+        $ConnectionTarget
+    }
+    else {
+        if ($IPv4AddressCheck.Success) {$IPv4Address} else {$ConnectionTarget}
+    }
 
-    # ===== Check if the computer is reachable via WSMan/WinRM =====
-    if (Test-WSMan -ComputerName $ConnectionTarget -ErrorAction SilentlyContinue) {$WsManWinRM = $true} else {$WsManWinRM = $false}
+    # ===== Check if $ConnectionTarget is reachable via ping =====
+    $PingResponse = if (Test-Connection -TargetName $ConnectionTarget -Quiet -Count 1 -TimeoutSeconds 1 -ErrorAction SilentlyContinue) {$true} else {$false}
 
-    # ===== Define ports based on OS, fallback to a list =====
+    # ===== Check if $ConnectionTarget is reachable via WSMan/WinRM =====
+    $WsManWinRM = if (Test-WSMan -ComputerName $ConnectionTarget -ErrorAction SilentlyContinue) {$true} else {$false}
+
+    # ===== Define ports based on OS (fallback to a list) =====
     $PortList = if ($OperatingSystem -match 'Linux|Ubuntu|Debian|Red Hat|CentOS|SUSE|macOS|OS X|Mac') {
         @(22)
     }
@@ -146,7 +160,7 @@ function Get-ComputerAvailability {
     $TCPConnection = $false
     $OpenPort = $null
     foreach ($Port in $PortList) {
-        if (Test-TCPPortAvailability -HostName $ConnectionTarget -Port $Port -Language $Language) {
+        if (Test-TCPPortAvailability -DNSHostName $ConnectionTarget -Port $Port -Language $Language) {
             $TCPConnection = $true
             $OpenPort = $Port
             break
@@ -154,41 +168,49 @@ function Get-ComputerAvailability {
     }
 
     # ===== Define the availability of the computer =====
-    $AvailabilityStatus = if ($PingResponse -or $WsManWinRM -or $TCPConnection) {"Online"} else {"Offline"}
+    $AvailabilityStatus = if ($PingResponse -or $WsManWinRM -or $TCPConnection) {'Online'} else {'Offline'}
 
     # ===== Define the availability message =====
-    $AvailabilityMessage = if (-not $PingResponse -or -not $WsManWinRM -or -not $DNSResolve -or -not $TCPConnection) {
+    $AvailabilityMessage = if (-not $DNSResolve -or -not $PingResponse -or -not $WsManWinRM -or -not $TCPConnection) {
         $Messages = @()
+        $RefValue = Get-RefValue -DomainName $DomainName -ComputerName $ComputerName -Language $Language
+        if ($DNSResolve) {
+            $Message = Get-ErrorMessages -ErrorCode 'COx0000001' -RefValue $RefValue -Language $Language
+            $Messages += $Message
+        }
         if ($PingResponse) {
-            $Message = Get-ErrorMessages -ErrorCode 'COx0000004' -DomainName $DomainName -ComputerName $ComputerName -Language $Language
+            $Message = Get-ErrorMessages -ErrorCode 'COx0000004' -RefValue $RefValue -Language $Language
             $Messages += $Message
         }
         if ($WsManWinRM) {
-            $Message = Get-ErrorMessages -ErrorCode 'COx0000002' -DomainName $DomainName -ComputerName $ComputerName -Language $Language
-            $Messages += $Message
-        }
-        if ($DNSResolve) {
-            $Message = Get-ErrorMessages -ErrorCode 'COx0000001' -DomainName $DomainName -ComputerName $ComputerName -Language $Language
+            $Message = Get-ErrorMessages -ErrorCode 'COx0000002' -RefValue $RefValue -Language $Language
             $Messages += $Message
         }
         if ($TCPConnection) {
-            $Message = Get-ErrorMessages -ErrorCode 'COx0000003' -DomainName $DomainName -ComputerName $ComputerName -Language $Language
+            $RefValue = Get-RefValue -DomainName $DomainName -ComputerName $ComputerName -AdditionalRef "$OpenPort" -Language $Language
+            $Message = Get-ErrorMessages -ErrorCode 'COx0000003' -RefValue $RefValue -Language $Language
             $Messages += $Message
         }
-        $Messages -join ' || '
+        $Messages -join '; '
     }
     else {
-        "|$DomainName|$ComputerName| Successfull connection and DNS resolve."
+        $RefValue = Get-RefValue -DomainName $DomainName -ComputerName $ComputerName -Language $Language
+        $Message = 'Connection and DNS resolve was successful'
+        "$Message | Ref=$RefValue"
     }
-    
-    return [PSCustomObject]@{
+
+    # ===== Write logging message for produktive computers =====
+    if (-not $PingResponse -and -not $WsManWinRM -and -not $TCPConnection) {
+        if ($SystemEnvironmentTag -eq "PRD") {Write-AppLogging -LoggingMessage $AvailabilityMessage -LoggingLevel 'Error' -Language $Language}
+    }
+
+    return [pscustomobject]@{
         ConnectionTarget = $ConnectionTarget
         AvailabilityStatus = $AvailabilityStatus
         AvailabilityMessage = $AvailabilityMessage
+        DNSResolve = $DNSResolve
         PingResponse = $PingResponse
         WsManWinRM = $WsManWinRM
-        DNSResolve = $DNSResolve
         TCPConnection = $TCPConnection
-        OpenPort = $OpenPort
     }
 }

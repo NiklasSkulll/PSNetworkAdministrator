@@ -56,41 +56,49 @@ function Add-DomainCredentials {
         [string]$DomainName,
     
         [Parameter(Mandatory)]
-        [PSCredential]$Credential,
+        [pscredential]$Credential,
 
         [ValidateSet('de', 'en')]
         [string]$Language = 'en'
     )
 
-    # === store credential in Windows Credential Manager ===
-    try {
-        $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
-        $CredentialCheck = Test-FunctionVariables -Param $Credential -ParamName '$Credential' -Language $Language
+    # ===== Check the function variables =====
+    $DomainNameCheck = Test-FunctionVariables -Param $DomainName -ParamName '$DomainName' -Language $Language
+    $CredentialCheck = Test-FunctionVariables -Param $Credential -ParamName '$Credential' -Language $Language
 
-        if (-not ($DomainNameCheck.Success) -or -not ($CredentialCheck.Success)) {
-            $ErrorMessages = @()
-            if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
-            if (-not ($CredentialCheck.Success)) {$ErrorMessages += $CredentialCheck.Message}
+    if (-not ($DomainNameCheck.Success) -or -not ($CredentialCheck.Success)) {
+        $ErrorMessages = @()
+        if (-not ($DomainNameCheck.Success)) {$ErrorMessages += $DomainNameCheck.Message}
+        if (-not ($CredentialCheck.Success)) {$ErrorMessages += $CredentialCheck.Message}
         
-            $ErrorMessage = $ErrorMessages -join ' || '
+        $ErrorMessage = $ErrorMessages -join '; '
 
-            throw $ErrorMessage
-        }
+        throw $ErrorMessage
+    }
 
+    # ===== Create reference value for messages =====
+    $RefValue = Get-RefValue -DomainName $DomainName -Language $Language
+
+    # ===== Store credentials in Windows Credential Manager =====
+    try {
+        # Create a unique id and store credentials
         $UniqueIdentifier = "PSNetAdmin_Domain_$DomainName"
         New-StoredCredential -Target $UniqueIdentifier -UserName $Credential.UserName -Password $Credential.GetNetworkCredential().Password -Type Generic -Persist LocalMachine
 
-        $InfoMessage = if ($Language -eq "de") {'Für diese Domain wurden Credentials gespeichert'} else {'Credentials are stored for this domain'}
-        Write-AppLogging -LoggingMessage "|$DomainName| $InfoMessage." -LoggingLevel 'Info' -Language $Language
+        # Write info message in logs
+        $InfoMessageText = if ($Language -eq "de") {'Credentials wurden gespeichert'} else {'Credentials are stored'}
+        $InfoMessage = "$InfoMessageText | Ref=$RefValue"
+        Write-AppLogging -LoggingMessage $InfoMessage -LoggingLevel 'Info' -Language $Language
 
-        return [PSCustomObject]@{
+        # Return status information
+        return [pscustomobject]@{
             Domain = $DomainName
             Stored = $true
-            Storage = "Windows Credential Manager"
+            Storage = 'Windows Credential Manager'
         }
     }
     catch {
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'INx0000005' -ExceptionMessage "$($_.Exception.Message)" -DomainName $DomainName -Language $Language
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000007' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $Language
         Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language
         throw $ErrorMessage
     }
