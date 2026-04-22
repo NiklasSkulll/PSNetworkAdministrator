@@ -39,6 +39,8 @@ function Get-ErrorMessages {
         'IOx0000002' = 'Failed to load file'
         'IOx0000003' = 'Failed to write to file'
         'PRx0000001' = 'Administrative privileges are required' # PR = privileges
+        'PRx0000002' = 'Administrative domain privileges are required'
+        'PRx0000003' = 'Administrative app privileges are required'
         'SYx0000001' = 'ErrorCode is null or whitespace' # SY = system/runtime
         'SYx0000002' = 'ErrorCode is unknown'
         'SYx0000003' = 'Failed to get domain information'
@@ -80,6 +82,8 @@ function Get-ErrorMessages {
         'IOx0000002' = 'Datei konnte nicht geladen werden'
         'IOx0000003' = 'Datei konnte nicht beschrieben werden'
         'PRx0000001' = 'Administratorrechte sind erforderlich' # PR = privileges
+        'PRx0000002' = 'Administratorrechte der Domain sind erforderlich'
+        'PRx0000003' = 'Administratorrechte der App sind erforderlich'
         'SYx0000001' = 'ErrorCode ist NULL oder besteht nur aus Leerzeichen' # SY = system/runtime
         'SYx0000002' = 'ErrorCode ist unbekannt'
         'SYx0000003' = 'Domaininformationen konnten nicht abgerufen werden'

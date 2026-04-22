@@ -21,11 +21,9 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='ComputerName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='DomainName'; Type='TEXT'; Constraints='NOT NULL'}
-                @{Name='MacAddress'; Type='TEXT'}
-                @{Name='HostRoleTag'; Type='TEXT'}
-                @{Name='SystemEnvironmentTag'; Type='TEXT'}
                 @{Name='GroupTag'; Type='TEXT'}
-                @{Name='ObservationDate'; Type='TEXT'}
+                @{Name='SystemEnvironmentTag'; Type='TEXT'}
+                @{Name='UpdatedAtDate'; Type='TEXT'}
             )
         }
         # Database index definition
@@ -46,13 +44,20 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
                 @{Name='ComputerSystemManufacturer'; Type='TEXT'}
                 @{Name='ComputerSystemModel'; Type='TEXT'}
+                @{Name='ComputerSystemType'; Type='TEXT'}
                 @{Name='BIOSManufacturer'; Type='TEXT'}
                 @{Name='BIOSSerialNumber'; Type='TEXT'}
-                @{Name='SMBIOSBIOSVersion'; Type='TEXT'}
+                @{Name='SMBIOSVersion'; Type='TEXT'}
                 @{Name='CPUGenerationName'; Type='TEXT'}
+                @{Name='CPUNumberOfCores'; Type='INTEGER'}
+                @{Name='CPUNumberOfLogicalProcessors'; Type='INTEGER'}
                 @{Name='CPUReleaseDate'; Type='TEXT'}
                 @{Name='CPUStillNewDate'; Type='TEXT'}
                 @{Name='CPUMaxUsedDate'; Type='TEXT'}
+                @{Name='TotalPhysicalMemoryGB'; Type='REAL'}
+                @{Name='TotalLocalStorageSizeGB'; Type='REAL'}
+                @{Name='TotalLocalStorageFreeGB'; Type='REAL'}
+                @{Name='TotalLocalStorageUsedGB'; Type='REAL'}
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
@@ -71,10 +76,9 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
-                @{Name='OSType'; Type='TEXT'}
                 @{Name='OperatingSystem'; Type='TEXT'}
                 @{Name='OperatingSystemVersion'; Type='TEXT'}
-                @{Name='OSVersion'; Type='TEXT'}
+                @{Name='OSDisplayVersion'; Type='TEXT'}
                 @{Name='OSArchitecture'; Type='TEXT'}
                 @{Name='ObservationDate'; Type='TEXT'}
             )
@@ -94,17 +98,38 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
+                @{Name='ComputerDomainRole'; Type='INTEGER'}
+                @{Name='HostRole'; Type='TEXT'}
                 @{Name='IsDomainController'; Type='INTEGER'}
                 @{Name='MemberOf'; Type='TEXT'}
                 @{Name='Enabled'; Type='INTEGER'}
-                @{Name='InteractiveUser'; Type='TEXT'}
-                @{Name='AdminListDirectMembers'; Type='TEXT'}
                 @{Name='ObservationDate'; Type='TEXT'}
             )
         }
         # Database index definition
         $DataUniqueIndex = @{
             UX = 'UX_ComputerADInformations_DomainComputersID'
+            IndexNames = @(
+                @{Name='DomainComputersID'}
+            )
+        }
+    }
+    elseif ($DataTableName -eq "_ComputerSystemUserInformations_") {
+        # Database schema
+        $DataSchema = @{
+            Table = '_ComputerSystemUserInformations_'
+            Columns = @(
+                @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
+                @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
+                @{Name='SystemUserName'; Type='TEXT'}
+                @{Name='InteractiveUser'; Type='TEXT'}
+                @{Name='AdminMembers'; Type='TEXT'}
+                @{Name='ObservationDate'; Type='TEXT'}
+            )
+        }
+        # Database index definition
+        $DataUniqueIndex = @{
+            UX = 'UX_ComputerSystemUserInformations_DomainComputersID'
             IndexNames = @(
                 @{Name='DomainComputersID'}
             )
@@ -118,10 +143,28 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
                 @{Name='DNSHostName'; Type='TEXT'}
+                @{Name='MacAddress'; Type='TEXT'}
                 @{Name='IPv4Address'; Type='TEXT'}
                 @{Name='SubnetMask'; Type='TEXT'}
                 @{Name='UsesDHCP'; Type='INTEGER'}
-                @{Name='UsesWINS'; Type='INTEGER'}
+                @{Name='ObservationDate'; Type='TEXT'}
+            )
+        }
+        # Database index definition
+        $DataUniqueIndex = @{
+            UX = 'UX_ComputerNetworkInformations_DomainComputersID'
+            IndexNames = @(
+                @{Name='DomainComputersID'}
+            )
+        }
+    }
+    elseif ($DataTableName -eq "_ComputerConnectionInformations_") {
+        # Database schema
+        $DataSchema = @{
+            Table = '_ComputerConnectionInformations_'
+            Columns = @(
+                @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
+                @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
                 @{Name='DNSResolve'; Type='INTEGER'}
                 @{Name='PingResponse'; Type='INTEGER'}
                 @{Name='WsManWinRM'; Type='INTEGER'}
@@ -131,7 +174,7 @@ function Get-SQLiteSchemaDefinition {
         }
         # Database index definition
         $DataUniqueIndex = @{
-            UX = 'UX_ComputerNetworkInformations_DomainComputersID'
+            UX = 'UX_ComputerConnectionInformations_DomainComputersID'
             IndexNames = @(
                 @{Name='DomainComputersID'}
             )
@@ -144,7 +187,6 @@ function Get-SQLiteSchemaDefinition {
             Columns = @(
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='DomainComputersID'; Type='INTEGER'; Constraints='NOT NULL REFERENCES _DomainComputers_(ID)'}
-                @{Name='AddInID'; Type='INTEGER'}
                 @{Name='AddInName'; Type='TEXT'}
                 @{Name='AddInPath'; Type='TEXT'}
                 @{Name='AddInArgument'; Type='TEXT'}
