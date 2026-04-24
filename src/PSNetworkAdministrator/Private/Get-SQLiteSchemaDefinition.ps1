@@ -21,6 +21,7 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='ID'; Type='INTEGER'; Constraints='PRIMARY KEY'}
                 @{Name='ComputerName'; Type='TEXT'; Constraints='NOT NULL'}
                 @{Name='DomainName'; Type='TEXT'; Constraints='NOT NULL'}
+                @{Name='ComputerDescription'; Type='TEXT'}
                 @{Name='GroupTag'; Type='TEXT'}
                 @{Name='SystemEnvironmentTag'; Type='TEXT'}
                 @{Name='UpdatedAtDate'; Type='TEXT'}
@@ -49,11 +50,8 @@ function Get-SQLiteSchemaDefinition {
                 @{Name='BIOSSerialNumber'; Type='TEXT'}
                 @{Name='SMBIOSVersion'; Type='TEXT'}
                 @{Name='CPUGenerationName'; Type='TEXT'}
-                @{Name='CPUNumberOfCores'; Type='INTEGER'}
-                @{Name='CPUNumberOfLogicalProcessors'; Type='INTEGER'}
-                @{Name='CPUReleaseDate'; Type='TEXT'}
-                @{Name='CPUStillNewDate'; Type='TEXT'}
-                @{Name='CPUMaxUsedDate'; Type='TEXT'}
+                @{Name='CPUTotalNumberOfCores'; Type='INTEGER'}
+                @{Name='CPUTotalNumberOfLogicalProcessors'; Type='INTEGER'}
                 @{Name='TotalPhysicalMemoryGB'; Type='REAL'}
                 @{Name='TotalLocalStorageSizeGB'; Type='REAL'}
                 @{Name='TotalLocalStorageFreeGB'; Type='REAL'}

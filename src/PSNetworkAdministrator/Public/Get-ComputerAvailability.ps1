@@ -95,7 +95,6 @@ function Get-ComputerAvailability {
         [Parameter(Mandatory)]
         [string]$ComputerName,
 
-        [Parameter(Mandatory)]
         [string]$DNSHostName,
 
         [Parameter(Mandatory)]
