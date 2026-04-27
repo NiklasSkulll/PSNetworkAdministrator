@@ -17,9 +17,6 @@ function Get-ComputerUser {
         [string]$DNSHostName,
 
         [ValidateSet('de', 'en')]
-        [string]$SystemLanguage = $script:ModuleConfig.SystemLanguage,
-
-        [ValidateSet('de', 'en')]
         [string]$Language = $script:ModuleConfig.Language
     )
 
@@ -64,7 +61,7 @@ function Get-ComputerUser {
 
         # Get interactive computer users
         try {
-            $InteractiveUser = Get-CimInstance -CimSession $CimSession -ClassName Win32_LogonSession -Filter 'LogonType=2 OR LogonType=10' -ErrorAction Stop | ForEach-Object {Get-CimAssociatedInstance -InputObject $_ -Association Win32_LoggedOnUser | Where-Object {$_.Domain -ne 'NT AUTHORITY' -and $_.Name -notin 'SYSTEM','LOCAL SERVICE','NETWORK SERVICE'} | ForEach-Object {"$($_.Domain)\$($_.Name)"}} | Sort-Object -Unique
+            $InteractiveUser = Get-CimInstance -CimSession $CimSession -ClassName Win32_LogonSession -Filter 'LogonType=2 OR LogonType=10' -ErrorAction Stop | ForEach-Object {Get-CimAssociatedInstance -InputObject $_ -Association Win32_LoggedOnUser -ErrorAction Stop | Where-Object {$_.Domain -ne 'NT AUTHORITY' -and $_.Name -notin 'SYSTEM','LOCAL SERVICE','NETWORK SERVICE'} | ForEach-Object {"$($_.Domain)\$($_.Name)"}} | Sort-Object -Unique
 
             $InteractiveUser = @($InteractiveUser | Where-Object {$_}) | ConvertTo-Json -Compress -AsArray
         }
@@ -74,10 +71,13 @@ function Get-ComputerUser {
 
         # Get local computer admins
         try {
-            $AdminGroup = if ($SystemLanguage -eq "de") {'Administratoren'} else {'Administrators'}
-            $AdminMembers = (Get-LocalGroupMember -Group $AdminGroup -ErrorAction Stop).Name
+            # Get the admin group with the SID for the local administrators
+            $AdminGroup = Get-CimInstance -CimSession $CimSession -ClassName Win32_Group -Filter "SID='S-1-5-32-544'" -ErrorAction Stop
+            $AdminMembersRaw = Get-CimAssociatedInstance -InputObject $AdminGroup -Association Win32_GroupUser -ErrorAction Stop
 
-            $AdminMembers = @($AdminMembers | Where-Object {$_}) | ConvertTo-Json -Compress -AsArray
+            $AdminMembers = @($AdminMembersRaw | ForEach-Object {
+                if ($_.Domain -and $_.Name) {"$($_.Domain)\$($_.Name)"}
+            } | Where-Object {$_}) | ConvertTo-Json -Compress -AsArray
         }
         catch {
             $AdminMembers = $null
@@ -94,7 +94,7 @@ function Get-ComputerUser {
         }
     }
     catch {
-        # Return computer user informations
+        # Return $null if connection failed
         return [pscustomobject]@{
             ComputerName = $ComputerName
             DomainName = $DomainName
@@ -103,5 +103,8 @@ function Get-ComputerUser {
             AdminMembers = $null
             ObservationDate = $ObservationDate
         }
+    }
+    finally {
+        if ($CimSession) {Remove-CimSession $CimSession}
     }
 }
