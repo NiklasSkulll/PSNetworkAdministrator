@@ -9,7 +9,7 @@ function Get-SQLiteSchemaDefinition {
         [string]$DataTableName,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Return the right database schema =====

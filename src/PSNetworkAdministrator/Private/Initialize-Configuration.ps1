@@ -75,6 +75,8 @@ function Initialize-Configuration {
         return [pscustomobject]@{
             AppName = $ConfigData.AppName
             Version = $ConfigData.Version
+            SystemLanguage = $ConfigData.SystemLanguage
+            Language = $ConfigData.Language
             Logging = [pscustomobject]@{
                 Enabled = $ConfigData.Logging.Enabled
                 LoggingPath = $ConfigData.Logging.LoggingPath
@@ -94,6 +96,7 @@ function Initialize-Configuration {
                 HostRole = $ConfigData.Tags.HostRole
                 Group = $ConfigData.Tags.Group
                 SystemEnvironment = $ConfigData.Tags.SystemEnvironment
+                OperatingSystem = $ConfigData.Tags.OperatingSystem
             }
             AddIns = [pscustomobject]@{
                 AddInCount = $ConfigData.AddIns.AddInCount

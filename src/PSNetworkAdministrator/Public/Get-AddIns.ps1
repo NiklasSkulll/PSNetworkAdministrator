@@ -37,17 +37,18 @@ function Get-AddIns {
     try {
         $AddIns = @()
         $AddInCountRef = $AddInCount
-        $Names = $AddInNames -split ','
-        $Paths = $AddInPaths -split ','
-        $Arguments = $AddInArguments -split ','
+
+        $Names = @($AddInNames -split ',' | ForEach-Object {$_.Trim()})
+        $Paths = @($AddInPaths -split ',' | ForEach-Object {$_.Trim()})
+        $Arguments = @($AddInArguments -split ',' | ForEach-Object {$_.Trim()})
 
         $AC = 0
         while ($AddInCountRef -gt 0) {
             $AddInCountRef--
 
-            $AddInN = $Names[$AC].Trim()
-            $AddInP = $Paths[$AC].Trim()
-            $AddInA = $Arguments[$AC].Trim()
+            $AddInN = $Names[$AC]
+            $AddInP = $Paths[$AC]
+            $AddInA = $Arguments[$AC]
 
             $AddIn = [pscustomobject]@{
                 AddInName = $AddInN

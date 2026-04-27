@@ -32,7 +32,15 @@ try {
 }
 catch {
     $RefValue = '<PSNetworkAdministrator|Module|Config>'
-    $ErrorMessage = Get-ErrorMessages -ErrorCode 'IOx0000002' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+    $ExceptionMessage = "$($_.Exception.Message)"
+    $ErrorMessage = if ($ExceptionMessage.StartsWith('[')) {
+        "[IOx0000002] Failed to load file | Ref=$RefValue >> $ExceptionMessage"
+    }
+    else {
+        "[IOx0000002] Failed to load file | Ref=$RefValue | Exception=$ExceptionMessage"
+    }
+
+    Write-Warning $ErrorMessage
     throw $ErrorMessage
 }
 
@@ -40,16 +48,16 @@ catch {
 if (-not (Get-Module -ListAvailable -Name CredentialManager) -or -not (Get-Module -ListAvailable -Name ActiveDirectory)) {
     $ErrorMessages = @()
     if (-not (Get-Module -ListAvailable -Name ActiveDirectory)) {
-        $Message = Get-ErrorMessages -ErrorCode 'SYx0000009' -RefValue '<ActiveDirectory>'
+        $Message = Get-ErrorMessages -ErrorCode 'SYx0000009' -RefValue '<ActiveDirectory>' -Language $script:ModuleConfig.Language
         $ErrorMessages += $Message
     }
     if (-not (Get-Module -ListAvailable -Name CredentialManager)) {
-        $Message = Get-ErrorMessages -ErrorCode 'SYx0000009' -RefValue '<CredentialManager>'
+        $Message = Get-ErrorMessages -ErrorCode 'SYx0000009' -RefValue '<CredentialManager>' -Language $script:ModuleConfig.Language
         $ErrorMessages += $Message
     }
     $ErrorMessage = $ErrorMessages -join '; '
 
-    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $script:ModuleConfig.Language
     throw $ErrorMessage
 }
 
@@ -60,9 +68,9 @@ try {
 }
 catch {
     $RefValue = '<ActiveDirectory|CredentialManager>'
-    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000010' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000010' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $script:ModuleConfig.Language
     
-    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning' -Language $script:ModuleConfig.Language
 }
 
 # ===== SQLite dependency =====
@@ -88,14 +96,14 @@ if (Test-Path -LiteralPath $SQLiteDll) {
         $script:SQLiteAvailable = $false
         
         $RefValue = '<PSNetworkAdministrator|Module>'
-        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000005' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue
+        $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000005' -ExceptionMessage "$($_.Exception.Message)" -RefValue $RefValue -Language $script:ModuleConfig.Language
     
-        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
+        Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning' -Language $script:ModuleConfig.Language
     }
 }
 else {
     $RefValue = '<PSNetworkAdministrator|Module>'
-    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000006' -RefValue $RefValue
+    $ErrorMessage = Get-ErrorMessages -ErrorCode 'SYx0000006' -RefValue $RefValue -Language $script:ModuleConfig.Language
     
-    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning'
+    Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Warning' -Language $script:ModuleConfig.Language
 }

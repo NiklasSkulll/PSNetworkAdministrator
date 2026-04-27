@@ -14,7 +14,7 @@ function Test-FunctionVariables {
         [bool]$WriteLogging = $false,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Create reference value for messages =====
@@ -24,7 +24,7 @@ function Test-FunctionVariables {
     if ($null -eq $Param) {
         $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000001' -RefValue $RefValue -Language $Language
 
-        if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
+        if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language}
 
         return [pscustomobject]@{
             Success = $false
@@ -37,7 +37,7 @@ function Test-FunctionVariables {
         if ([string]::IsNullOrWhiteSpace($Param)) {
             $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000002' -RefValue $RefValue -Language $Language
 
-            if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
+            if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language}
 
             return [pscustomobject]@{
                 Success = $false
@@ -51,7 +51,7 @@ function Test-FunctionVariables {
         if ($Param.Count -eq 0) {
             $ErrorMessage = Get-ErrorMessages -ErrorCode 'VAx0000005' -RefValue $RefValue -Language $Language
 
-            if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error'}
+            if ($WriteLogging) {Write-AppLogging -LoggingMessage $ErrorMessage -LoggingLevel 'Error' -Language $Language}
 
             return [pscustomobject]@{
                 Success = $false

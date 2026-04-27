@@ -17,7 +17,7 @@ function Get-OperatingSystem {
         [string]$DNSHostName,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Check the function variables =====

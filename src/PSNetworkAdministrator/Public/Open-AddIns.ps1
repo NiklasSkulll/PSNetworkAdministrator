@@ -21,7 +21,7 @@ function Open-AddIns {
         [string]$ComputerName,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Check the function variables =====

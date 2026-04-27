@@ -71,7 +71,7 @@ function Test-TCPPortAvailability {
         [int]$Port,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Check function variables =====

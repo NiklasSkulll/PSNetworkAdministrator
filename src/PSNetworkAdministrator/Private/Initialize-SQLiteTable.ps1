@@ -15,7 +15,7 @@ function Initialize-SQLiteTable {
         [pscustomobject]$DataObject,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Initialize data schema =====

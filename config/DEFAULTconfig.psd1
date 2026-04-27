@@ -5,6 +5,8 @@
 @{
     AppName = 'PSNetworkAdministrator'
     Version = '1.0.0'
+    SystemLanguage = 'en' # or 'de'
+    Language = 'en' # or 'de'
 
     Logging = @{
         Enabled = $true
@@ -28,6 +30,7 @@
         HostRole = 'Client,Server'
         Group = 'GroupA,GroupB'
         SystemEnvironment = 'DEV,TEST,PRD'
+        OperatingSystem = 'Windows,Linux'
     }
 
     AddIns = @{

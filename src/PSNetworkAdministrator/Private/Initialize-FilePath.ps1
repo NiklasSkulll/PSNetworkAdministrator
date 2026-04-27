@@ -9,7 +9,7 @@ function Initialize-FilePath {
         [string]$FilePath,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Check the function variable =====

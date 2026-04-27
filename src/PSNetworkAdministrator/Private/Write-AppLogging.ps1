@@ -75,7 +75,7 @@ function Write-AppLogging {
         [string]$LoggingPath = $script:LoggingPath,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
     
     # ===== Get current date and time =====

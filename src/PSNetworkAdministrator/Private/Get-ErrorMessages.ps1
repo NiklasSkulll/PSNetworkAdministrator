@@ -13,7 +13,7 @@ function Get-ErrorMessages {
         [string]$RefValue,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
     
     # ===== Check if $ErrorCode is null or whitespace =====

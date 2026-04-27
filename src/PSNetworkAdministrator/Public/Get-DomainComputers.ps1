@@ -12,7 +12,7 @@ function Get-DomainComputers {
         [pscredential]$Credential,
 
         [ValidateSet('de', 'en')]
-        [string]$Language = 'en'
+        [string]$Language = $script:ModuleConfig.Language
     )
 
     # ===== Check the function variables =====
